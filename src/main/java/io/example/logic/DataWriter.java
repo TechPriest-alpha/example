@@ -37,6 +37,7 @@ public class DataWriter extends BaseVerticle {
     @Transactional
     @HandlerMethod
     public int handler(final PrivateData msg) {
+        logger.debug("Write private data: {}", msg);
         if (accessDao.writeAllowed(msg)) {
             val result = writerDao.store(msg);
             auditDao.recordSuccessfulAccess(msg);
@@ -50,7 +51,9 @@ public class DataWriter extends BaseVerticle {
     @Transactional
     @HandlerMethod
     public int checkAccess(final PublicData msg) {
+        logger.debug("Check public access: {}", msg);
         val result = writerDao.store(msg);
+
         auditDao.recordSuccessfulAccess(msg);
         return result;
     }

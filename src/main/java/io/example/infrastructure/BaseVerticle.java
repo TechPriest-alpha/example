@@ -1,10 +1,13 @@
 package io.example.infrastructure;
 
+import io.example.dto.DtoMarker;
+import io.example.dto.ResultWrap;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -70,13 +73,21 @@ public class BaseVerticle extends AbstractVerticle {
     protected void registerConsumer(final String address) {
         logger.debug("Consumer registered for: {}", address);
         vertx.eventBus().localConsumer(address, msg -> {
+            logger.trace("Handling {} at {}", msg.body(), address);
             val result = handleWithRespectToTransactions(msg);
-            msg.reply(result);
+            val dtoCodec = new DeliveryOptions().setCodecName("dtoCodec");
+            if (result instanceof DtoMarker) {
+                msg.reply(result, dtoCodec);
+            } else {
+                msg.reply(new ResultWrap<>(result), dtoCodec);
+            }
         });
     }
 
     protected <T> void send(final String address, final Object message, final Handler<AsyncResult<Message<T>>> handler) {
-        vertx.eventBus().send(address, message, handler);
+        logger.trace("Sending {} to {} start", message, address);
+        vertx.eventBus().send(address, message, new DeliveryOptions().setCodecName("dtoCodec"), handler);
+        logger.trace("Sending {} to {} end", message, address);
     }
 
     private <T> Object handleWithRespectToTransactions(

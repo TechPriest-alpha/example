@@ -1,5 +1,6 @@
 package io.example.dao;
 
+import io.example.dto.AccessCheckRequest;
 import io.example.dto.PrivateData;
 import io.example.dto.PrivateDataRequest;
 import io.example.dto.PublicData;
@@ -20,6 +21,10 @@ public class AccessDao {
     }
 
     public boolean writeAllowed(final PublicData msg) {
+        return false;
+    }
+
+    public boolean readAllowed(final AccessCheckRequest msg) {
         return false;
     }
 }

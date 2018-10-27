@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 @RequiredArgsConstructor
 public class SpringVerticleFactory implements VerticleFactory {
     private final ApplicationContext ctx;
+
     @Override
     public String prefix() {
         return "spring";
@@ -20,6 +21,6 @@ public class SpringVerticleFactory implements VerticleFactory {
 
     @Override
     public Verticle createVerticle(final String verticleName, final ClassLoader classLoader) throws Exception {
-        return ctx.getBean(verticleName, BaseVerticle.class);
+        return ctx.getBean(verticleName.replaceAll(prefix() + ":", ""), BaseVerticle.class);
     }
 }

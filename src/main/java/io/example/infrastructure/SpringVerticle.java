@@ -1,6 +1,7 @@
 package io.example.infrastructure;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,6 +14,7 @@ import java.lang.annotation.Target;
  * @since 2018-10-27
  */
 @Scope
+@Component
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

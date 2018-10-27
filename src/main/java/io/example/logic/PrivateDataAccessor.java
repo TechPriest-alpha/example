@@ -4,6 +4,7 @@ import io.example.Addressing;
 import io.example.dao.AccessDao;
 import io.example.dao.AuditDao;
 import io.example.dao.RetrievalDao;
+import io.example.dto.AccessCheckRequest;
 import io.example.dto.PrivateData;
 import io.example.dto.PrivateDataRequest;
 import io.example.infrastructure.BaseVerticle;
@@ -36,6 +37,7 @@ public class PrivateDataAccessor extends BaseVerticle {
     @Transactional
     @HandlerMethod
     public PrivateData handler(final PrivateDataRequest msg) {
+        logger.debug("Data request: {}", msg);
         if (accessDao.readAllowed(msg)) {
             val result = retrievalDao.fetch(msg);
             auditDao.recordSuccessfulAccess(msg);
@@ -47,7 +49,8 @@ public class PrivateDataAccessor extends BaseVerticle {
     }
 
     @HandlerMethod
-    public boolean checkAccess(final PrivateDataRequest msg) {
+    public boolean checkAccess(final AccessCheckRequest msg) {
+        logger.debug("Access check: {}", msg);
         return accessDao.readAllowed(msg);
     }
 }

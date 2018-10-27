@@ -7,5 +7,5 @@ import lombok.Value;
  * @since 2018-10-27
  */
 @Value
-public class PublicData {
+public class PublicData implements DtoMarker {
 }

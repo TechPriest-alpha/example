@@ -31,6 +31,7 @@ public class PublicDataReader extends BaseVerticle {
     @Transactional
     @HandlerMethod
     public PublicData handler(final PublicDataRequest msg) {
+        logger.debug("Data request: {}", msg);
         return retrievalDao.fetch(msg);
     }
 }

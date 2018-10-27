@@ -10,7 +10,8 @@ public interface Sleeper {
 
     default void delay() {
         try {
-            Thread.sleep(ThreadLocalRandom.current().nextInt(100, 600));
+//            ThreadLocalRandom.current().nextInt(100, 600)
+            Thread.sleep(300L);
         } catch (final Exception ignored) {}
     }
 }

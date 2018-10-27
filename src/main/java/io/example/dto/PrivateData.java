@@ -7,6 +7,6 @@ import lombok.Value;
  * @since 2018-10-27
  */
 @Value
-public class PrivateData {
+public class PrivateData implements DtoMarker {
     public static final PrivateData NULL = new PrivateData();
 }

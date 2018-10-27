@@ -1,11 +1,13 @@
 package io.example;
 
 import io.example.cfg.SpringVerticleFactory;
+import io.example.infrastructure.DtoCodec;
 import io.example.infrastructure.SpringVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
+import lombok.Getter;
 import lombok.val;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -18,12 +20,14 @@ import java.util.stream.Collectors;
  */
 public class DeployerVerticle extends AbstractVerticle {
 
+    @Getter
     private AnnotationConfigApplicationContext ctx;
 
     @Override
     public void start(final Future<Void> startFuture) {
         this.ctx = new AnnotationConfigApplicationContext(System.getProperty(Constants.CFG_PACKAGE));
         vertx.registerVerticleFactory(new SpringVerticleFactory(ctx));
+        vertx.eventBus().registerCodec(new DtoCodec());
         final List<Future> deployments = ctx.getBeansWithAnnotation(SpringVerticle.class).entrySet().stream().map(entry -> {
             val name = entry.getKey();
             val bean = entry.getValue();
