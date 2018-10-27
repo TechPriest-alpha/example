@@ -15,25 +15,25 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FakeAccessDao extends AccessDao implements Sleeper {
     @Override
     public boolean readAllowed(final PrivateDataRequest msg) {
-        delay();
+        delayMax();
         return ThreadLocalRandom.current().nextInt() % 2 == 0;
     }
 
     @Override
     public boolean writeAllowed(final PrivateData msg) {
-        delay();
+        delayMin();
         return ThreadLocalRandom.current().nextInt() % 2 == 0;
     }
 
     @Override
     public boolean writeAllowed(final PublicData msg) {
-        delay();
+        delayMin();
         return ThreadLocalRandom.current().nextInt() % 2 == 0;
     }
 
     @Override
     public boolean readAllowed(final AccessCheckRequest msg) {
-        delay();
+        delayMax();
         return ThreadLocalRandom.current().nextInt() % 2 == 0;
     }
 }

@@ -13,36 +13,36 @@ public class FakeAuditDao extends AuditDao implements Sleeper {
 
     @Override
     public void recordAccess(final PrivateDataRequest msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordUnsuccessfulAccess(final PrivateDataRequest msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordSuccessfulAccess(final PrivateDataRequest msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordSuccessfulAccess(final PrivateData msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordUnsuccessfulAccess(final PrivateData msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordSuccessfulAccess(final PublicData msg) {
-        delay();
+        delayAvg();
     }
 
     @Override
     public void recordUnsuccessfulAccess(final PublicData msg) {
-        delay();
+        delayAvg();
     }
 }

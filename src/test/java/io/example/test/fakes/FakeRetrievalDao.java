@@ -14,13 +14,13 @@ public class FakeRetrievalDao extends RetrievalDao implements Sleeper {
 
     @Override
     public PublicData fetch(final PublicDataRequest msg) {
-        delay();
+        delayMin();
         return new PublicData();
     }
 
     @Override
     public PrivateData fetch(final PrivateDataRequest msg) {
-        delay();
+        delayMin();
         return new PrivateData();
     }
 }

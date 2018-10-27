@@ -14,13 +14,13 @@ public class FakeWriterDao extends WriterDao implements Sleeper {
 
     @Override
     public int store(final PrivateData msg) {
-        delay();
+        delayMax();
         return ThreadLocalRandom.current().nextInt();
     }
 
     @Override
     public int store(final PublicData msg) {
-        delay();
+        delayMax();
         return ThreadLocalRandom.current().nextInt();
     }
 }

@@ -22,7 +22,7 @@ public class CommonApi extends BaseVerticle {
     public void insertPrivateData(final PrivateData privateData) {
         val sync = new ArrayBlockingQueue<Integer>(1);
         send(Addressing.PRIVATE_DATA_WRITER, privateData, reply -> {
-            logger.info("Insertion result: {}", reply.result().body());
+            logger.debug("Insertion result: {}", reply.result().body());
             put(sync, 1);
         });
         poll(sync);
@@ -32,7 +32,7 @@ public class CommonApi extends BaseVerticle {
         val sync = new ArrayBlockingQueue<Integer>(1);
 
         send(Addressing.PRIVATE_DATA_READER, privateDataRequest, reply -> {
-            logger.info("Read private result: {}", reply.result().body());
+            logger.debug("Read private result: {}", reply.result().body());
             put(sync, 2);
         });
         poll(sync);
@@ -42,7 +42,7 @@ public class CommonApi extends BaseVerticle {
         val sync = new ArrayBlockingQueue<Integer>(1);
 
         send(Addressing.PUBLIC_DATA_READER, publicDataRequest, reply -> {
-            logger.info("Read public result: {}", reply.result().body());
+            logger.debug("Read public result: {}", reply.result().body());
             put(sync, 3);
         });
         poll(sync);
@@ -52,7 +52,7 @@ public class CommonApi extends BaseVerticle {
         val sync = new ArrayBlockingQueue<Integer>(1);
 
         send(Addressing.PRIVATE_DATA_READER, privateDataRequest, reply -> {
-            logger.info("Access check result: {}", reply.result().body());
+            logger.debug("Access check result: {}", reply.result().body());
             put(sync, 4);
         });
         poll(sync);

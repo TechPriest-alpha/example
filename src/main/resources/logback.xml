@@ -12,6 +12,7 @@
 
     <logger name="org.springframework" level="WARN"/>
     <logger name="io.example" level="INFO"/>
+    <logger name="io.vertx.core.impl.DeploymentManager" level="OFF"/>
 
 
     <root level="INFO">

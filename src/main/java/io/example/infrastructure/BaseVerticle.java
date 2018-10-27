@@ -66,7 +66,7 @@ public class BaseVerticle extends AbstractVerticle {
         if (transactionTemplate == null) {
             transactionTemplate = new TransactionTemplate(platformTransactionManager);
             transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-            logger.info("Transaction template set");
+            logger.debug("Transaction template set");
         }
     }
 
