@@ -1,0 +1,23 @@
+<configuration scan="true" debug="false" scanPeriod="30 seconds">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{yyy-MM-dd HH:mm:ss.SSSXXX} %-5level [%thread] %logger{30}:%L - %X{profileExecution} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="io.example" level="INFO"/>
+
+
+    <root level="INFO">
+        <!--<appender-ref ref="FILE"/>-->
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
+

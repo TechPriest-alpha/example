@@ -18,15 +18,20 @@ import java.util.stream.Collectors;
  */
 public class DeployerVerticle extends AbstractVerticle {
 
+    private AnnotationConfigApplicationContext ctx;
+
     @Override
     public void start(final Future<Void> startFuture) {
-        val ctx = new AnnotationConfigApplicationContext(System.getProperty(Constants.CFG_PACKAGE));
+        this.ctx = new AnnotationConfigApplicationContext(System.getProperty(Constants.CFG_PACKAGE));
         vertx.registerVerticleFactory(new SpringVerticleFactory(ctx));
         final List<Future> deployments = ctx.getBeansWithAnnotation(SpringVerticle.class).entrySet().stream().map(entry -> {
             val name = entry.getKey();
             val bean = entry.getValue();
             val beanConfig = bean.getClass().getAnnotation(SpringVerticle.class);
             val options = new DeploymentOptions().setWorker(beanConfig.worker());
+            if (options.isWorker()) {
+                options.setMultiThreaded(config().getBoolean(Constants.MT_OVERRIDE));
+            }
             if (config().getBoolean(Constants.INSTANCES_OVERRIDE)) {
                 options.setInstances(20);
             } else {
