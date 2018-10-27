@@ -32,15 +32,7 @@ public class DeployerVerticle extends AbstractVerticle {
             val name = entry.getKey();
             val bean = entry.getValue();
             val beanConfig = bean.getClass().getAnnotation(SpringVerticle.class);
-            val options = new DeploymentOptions().setWorker(beanConfig.worker());
-            if (options.isWorker()) {
-                options.setMultiThreaded(config().getBoolean(Constants.MT_OVERRIDE));
-            }
-            if (config().getBoolean(Constants.INSTANCES_OVERRIDE)) {
-                options.setInstances(20);
-            } else {
-                options.setInstances(beanConfig.instances());
-            }
+            val options = makeOptions(beanConfig);
             val f = Future.future();
             vertx.deployVerticle("spring:" + name, options, onComplete -> {
                 if (onComplete.succeeded()) f.complete();
@@ -55,6 +47,24 @@ public class DeployerVerticle extends AbstractVerticle {
                 startFuture.fail(complete.cause());
             }
         });
+    }
 
+    private DeploymentOptions makeOptions(final SpringVerticle beanConfig) {
+        val options = new DeploymentOptions().setConfig(config());
+        //run verticles as EventLoop ones and handle blocking operations
+        //with execute blocking
+        if (!config().getBoolean(Constants.EXECUTE_AS_BLOCKING)) {
+            options.setWorker(beanConfig.worker());
+            if (options.isWorker()) {
+                options.setMultiThreaded(config().getBoolean(Constants.MT_OVERRIDE));
+            }
+        }
+
+        if (config().getBoolean(Constants.INSTANCES_OVERRIDE)) {
+            options.setInstances(20);
+        } else {
+            options.setInstances(beanConfig.instances());
+        }
+        return options;
     }
 }

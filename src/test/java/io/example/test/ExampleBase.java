@@ -58,7 +58,7 @@ public abstract class ExampleBase implements Sleeper {
 
     @RepeatedTest(REPEATS)
     void nonMtWorkers() throws InterruptedException {
-        val cfg = new JsonObject();
+        val cfg = getConfig();
         cfg.put(Constants.MT_OVERRIDE, false);
         cfg.put(Constants.INSTANCES_OVERRIDE, false);
         val options = new DeploymentOptions().setConfig(cfg);
@@ -69,7 +69,7 @@ public abstract class ExampleBase implements Sleeper {
 
     @RepeatedTest(REPEATS)
     void mtWorkers() throws InterruptedException {
-        val cfg = new JsonObject();
+        val cfg = getConfig();
         cfg.put(Constants.MT_OVERRIDE, true);
         cfg.put(Constants.INSTANCES_OVERRIDE, false);
         val options = new DeploymentOptions().setConfig(cfg);
@@ -78,9 +78,13 @@ public abstract class ExampleBase implements Sleeper {
         prepareAndRunWorkload(options, deployerVerticle, pool);
     }
 
+    protected JsonObject getConfig() {
+        return new JsonObject().put(Constants.EXECUTE_AS_BLOCKING, false);
+    }
+
     @RepeatedTest(REPEATS)
     void multiInstanceWorkers() throws InterruptedException {
-        val cfg = new JsonObject();
+        val cfg = getConfig();
         cfg.put(Constants.MT_OVERRIDE, false);
         cfg.put(Constants.INSTANCES_OVERRIDE, true);
         val options = new DeploymentOptions().setConfig(cfg);

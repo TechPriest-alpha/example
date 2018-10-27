@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AverageLoadFlowExample extends ExampleBase {
+class AverageLoadFlowExample_Workers extends ExampleBase {
 
 
     protected void runBasicWorkload(final AnnotationConfigApplicationContext ctx, final ExecutorService pool) throws InterruptedException {

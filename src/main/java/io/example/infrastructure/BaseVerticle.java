@@ -1,5 +1,6 @@
 package io.example.infrastructure;
 
+import io.example.Constants;
 import io.example.dto.DtoMarker;
 import io.example.dto.ResultWrap;
 import io.vertx.core.AbstractVerticle;
@@ -73,15 +74,32 @@ public class BaseVerticle extends AbstractVerticle {
     protected void registerConsumer(final String address) {
         logger.debug("Consumer registered for: {}", address);
         vertx.eventBus().localConsumer(address, msg -> {
-            logger.trace("Handling {} at {}", msg.body(), address);
-            val result = handleWithRespectToTransactions(msg);
-            val dtoCodec = new DeliveryOptions().setCodecName("dtoCodec");
-            if (result instanceof DtoMarker) {
-                msg.reply(result, dtoCodec);
+            logger.debug("Handling {} at {}", msg.body(), address);
+            if (isWorkerVerticle() && config().getBoolean(Constants.EXECUTE_AS_BLOCKING)) {
+                //blocking execution overridden and verticle runs on event loop: execute separately
+                vertx.executeBlocking(handler -> doExecute(msg), false, result -> {
+                });
             } else {
-                msg.reply(new ResultWrap<>(result), dtoCodec);
+                //execute normally
+                doExecute(msg);
             }
         });
+    }
+
+    private boolean isWorkerVerticle() {
+        return this.getClass().getAnnotation(SpringVerticle.class).worker();
+    }
+
+    private void doExecute(final Message<Object> msg) {
+        logger.debug("Executing: {}", msg.body());
+
+        val result = handleWithRespectToTransactions(msg);
+        val dtoCodec = new DeliveryOptions().setCodecName("dtoCodec");
+        if (result instanceof DtoMarker) {
+            msg.reply(result, dtoCodec);
+        } else {
+            msg.reply(new ResultWrap<>(result), dtoCodec);
+        }
     }
 
     protected <T> void send(final String address, final Object message, final Handler<AsyncResult<Message<T>>> handler) {
