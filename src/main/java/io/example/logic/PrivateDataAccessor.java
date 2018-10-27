@@ -1,6 +1,6 @@
 package io.example.logic;
 
-import io.example.Adressing;
+import io.example.Addressing;
 import io.example.dao.AccessDao;
 import io.example.dao.AuditDao;
 import io.example.dao.RetrievalDao;
@@ -22,26 +22,32 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @SpringVerticle(worker = true)
-public class PrivateDataReader extends BaseVerticle {
+public class PrivateDataAccessor extends BaseVerticle {
     private final AccessDao accessDao;
     private final AuditDao auditDao;
     private final RetrievalDao retrievalDao;
 
     @Override
     public void start(final Future<Void> startFuture) throws Exception {
-        registerConsumer(Adressing.PRIVATE_DATA_READER);
+        registerConsumer(Addressing.PRIVATE_DATA_READER);
         startFuture.complete();
     }
 
     @Transactional
     @HandlerMethod
     public PrivateData handler(final PrivateDataRequest msg) {
-        if (accessDao.allowed(msg)) {
+        if (accessDao.readAllowed(msg)) {
             val result = retrievalDao.fetch(msg);
-            auditDao.recordAccess(msg);
+            auditDao.recordSuccessfulAccess(msg);
             return result;
         } else {
+            auditDao.recordUnsuccessfulAccess(msg);
             return PrivateData.NULL;
         }
+    }
+
+    @HandlerMethod
+    public boolean checkAccess(final PrivateDataRequest msg) {
+        return accessDao.readAllowed(msg);
     }
 }

@@ -26,7 +26,12 @@ public class DeployerVerticle extends AbstractVerticle {
             val name = entry.getKey();
             val bean = entry.getValue();
             val beanConfig = bean.getClass().getAnnotation(SpringVerticle.class);
-            val options = new DeploymentOptions().setWorker(beanConfig.worker()).setInstances(beanConfig.instances());
+            val options = new DeploymentOptions().setWorker(beanConfig.worker());
+            if (config().getBoolean(Constants.INSTANCES_OVERRIDE)) {
+                options.setInstances(20);
+            } else {
+                options.setInstances(beanConfig.instances());
+            }
             val f = Future.future();
             vertx.deployVerticle("spring:" + name, options, onComplete -> {
                 if (onComplete.succeeded()) f.complete();

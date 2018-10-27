@@ -1,7 +1,9 @@
 package io.example.infrastructure;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.logging.Logger;
@@ -71,6 +73,10 @@ public class BaseVerticle extends AbstractVerticle {
             val result = handleWithRespectToTransactions(msg);
             msg.reply(result);
         });
+    }
+
+    protected <T> void send(final String address, final Object message, final Handler<AsyncResult<Message<T>>> handler) {
+        vertx.eventBus().send(address, message, handler);
     }
 
     private <T> Object handleWithRespectToTransactions(
