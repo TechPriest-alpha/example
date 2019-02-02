@@ -1,0 +1,50 @@
+<configuration scan="true" debug="false" scanPeriod="30 seconds">
+
+    <property name="_INTERNAL_LOG_PATH" value="${LOG_PATH:-./logs}"/>
+
+    <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-basic-chat-server}"/>
+
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{yyy-MM-dd HH:mm:ss.SSSXXX} %-5level [%thread] %logger{30}:%L - %X{profileExecution} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.RollingFileAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date{yyy-MM-dd HH:mm:ss.SSSXXX} %-5level [%thread] %logger{30}:%L - %X{profileExecution} - %msg%n
+            </pattern>
+        </encoder>
+
+        <file>${_INTERNAL_LOG_PATH}/${_INTERNAL_APP_NAME}.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${_INTERNAL_LOG_PATH}/${_INTERNAL_APP_NAME}_%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>20</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>30MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="io.example" level="INFO"/>
+    <logger name="io.vertx.core.impl.DeploymentManager" level="OFF"/>
+
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
+
