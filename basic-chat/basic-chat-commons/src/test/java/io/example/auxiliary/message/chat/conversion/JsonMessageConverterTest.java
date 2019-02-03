@@ -1,8 +1,8 @@
 package io.example.auxiliary.message.chat.conversion;
 
-import io.example.auxiliary.message.chat.AuthRequest;
-import io.example.auxiliary.message.chat.AuthResponse;
-import io.example.auxiliary.message.chat.ChatMessage;
+import io.example.auxiliary.message.chat.client.AuthenticationResponse;
+import io.example.auxiliary.message.chat.client.ChatMessage;
+import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.vertx.core.buffer.Buffer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,22 +19,22 @@ class JsonMessageConverterTest {
 
     @Test
     void authRequestEncode_Decode() {
-        final var authRequest = new AuthRequest("auth request");
+        final var authRequest = new AuthenticationRequest("auth request");
         final var encodedString = converter.encode(authRequest);
-        final var decodedFromString = converter.decode(encodedString, AuthRequest.class);
+        final var decodedFromString = converter.decode(encodedString, AuthenticationRequest.class);
         final var encodedBuffer = Buffer.buffer(encodedString);
-        final var decodedFromBuffer = converter.decode(encodedBuffer, AuthRequest.class);
+        final var decodedFromBuffer = converter.decode(encodedBuffer, AuthenticationRequest.class);
         assertEquals(authRequest, decodedFromString);
         assertEquals(authRequest, decodedFromBuffer);
     }
 
     @Test
     void authResponseEncode_Decode() {
-        final var authRequest = new AuthResponse("auth response");
+        final var authRequest = new AuthenticationResponse("auth response");
         final var encodedString = converter.encode(authRequest);
-        final var decodedFromString = converter.decode(encodedString, AuthResponse.class);
+        final var decodedFromString = converter.decode(encodedString, AuthenticationResponse.class);
         final var encodedBuffer = Buffer.buffer(encodedString);
-        final var decodedFromBuffer = converter.decode(encodedBuffer, AuthResponse.class);
+        final var decodedFromBuffer = converter.decode(encodedBuffer, AuthenticationResponse.class);
         assertEquals(authRequest, decodedFromString);
         assertEquals(authRequest, decodedFromBuffer);
     }

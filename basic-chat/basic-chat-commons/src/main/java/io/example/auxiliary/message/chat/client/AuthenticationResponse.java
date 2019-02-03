@@ -1,6 +1,7 @@
-package io.example.auxiliary.message.chat;
+package io.example.auxiliary.message.chat.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.example.auxiliary.message.chat.types.MessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -8,11 +9,11 @@ import java.beans.ConstructorProperties;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class AuthResponse extends ChatMessage {
+public class AuthenticationResponse extends ChatMessage {
     private final MessageType messageType = MessageType.AUTHENTICATION_RESPONSE;
 
     @ConstructorProperties("message")
-    public AuthResponse(final String message) {
+    public AuthenticationResponse(final String message) {
         super(message);
     }
 

@@ -3,7 +3,7 @@ package io.example.server.core;
 import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.annotations.SpringVerticle;
-import io.example.auxiliary.message.chat.AuthResponse;
+import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.server.Routing;
 import io.example.server.data.NewClient;
 import io.vertx.core.Future;
@@ -39,7 +39,7 @@ public class NewClientsManager extends BaseVerticle {
 
         @Override
         public void handle(final Buffer event) {
-            final var authResponse = authenticatingClient.decode(event, AuthResponse.class);
+            final var authResponse = authenticatingClient.decode(event, AuthenticationResponse.class);
             log.info("Client response to auth request: {}", authResponse);
             vertx.deployVerticle(new ConnectedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)));
         }

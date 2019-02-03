@@ -1,7 +1,7 @@
 package io.example.server.core;
 
 import io.example.auxiliary.BaseVerticle;
-import io.example.auxiliary.message.chat.ChatMessage;
+import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.server.data.ClientInfo;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;

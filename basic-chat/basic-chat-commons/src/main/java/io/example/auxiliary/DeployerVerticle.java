@@ -8,12 +8,15 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import lombok.Getter;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DeployerVerticle extends AbstractVerticle {
+    public static final Logger log = LoggerFactory.getLogger(DeployerVerticle.class);
 
     @Getter
     private AnnotationConfigApplicationContext ctx;
@@ -38,6 +41,7 @@ public class DeployerVerticle extends AbstractVerticle {
         CompositeFuture.all(deployments).setHandler(complete -> {
             if (complete.succeeded()) {
                 startFuture.complete();
+                log.info("Application: {} started successfully", ctx.getEnvironment().getProperty("application.name"));
             } else {
                 startFuture.fail(complete.cause());
             }
