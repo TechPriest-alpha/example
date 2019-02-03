@@ -1,6 +1,8 @@
 package io.example.client.api;
 
-import io.example.auxiliary.dto.ChatMessage;
+import io.example.auxiliary.message.chat.AuthResponse;
+import io.example.auxiliary.message.chat.BaseChatMessage;
+import io.example.auxiliary.message.chat.ChatMessage;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
@@ -16,7 +18,13 @@ public class DataHandler implements Handler<Buffer> {
 
     @Override
     public void handle(final Buffer event) {
-        log.info("Msg: {}", Json.decodeValue(event, ChatMessage.class));
-        socket.write(Json.encode(new ChatMessage("Hello from Client")));
+        final BaseChatMessage messageFromServer = Json.decodeValue(event, ChatMessage.class);
+        log.info("Msg: {}", messageFromServer);
+        if (messageFromServer.getMessageType().isAuthenticationRequest()) {
+            final String clientId = "ClientId";
+            socket.write(Json.encode(new AuthResponse(clientId)));
+            log.info("Authentication response: {}", clientId);
+        }
+
     }
 }

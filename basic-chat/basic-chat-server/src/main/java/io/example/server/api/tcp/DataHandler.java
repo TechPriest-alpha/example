@@ -1,6 +1,6 @@
 package io.example.server.api.tcp;
 
-import io.example.auxiliary.dto.ChatMessage;
+import io.example.auxiliary.message.chat.ChatMessage;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;

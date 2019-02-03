@@ -4,15 +4,14 @@ import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.errors.GeneralInternalError;
 import io.example.auxiliary.errors.NoHandlerFound;
 import io.example.auxiliary.eventbus.BaseDeliveryOptions;
+import io.example.auxiliary.message.internal.BaseInternalMessage;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,21 +22,26 @@ public abstract class BaseVerticle extends AbstractVerticle {
 
     private final ConcurrentMap<Class<?>, MethodHandle> FOUND_HANDLERS = new ConcurrentHashMap<>();
 
-    protected <T> void sendMessage(final String address, final T message) {
+    protected <T extends BaseInternalMessage> void sendMessage(final String address, final T message) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions());
     }
 
-    protected void registerConsumer(final String address) {
-        vertx.eventBus().consumer(address, this::messageHandler);
+    protected <T extends BaseInternalMessage> void sendMessageLocally(final String address, final T message) {
+        vertx.eventBus().send(address, message, new BaseDeliveryOptions().setLocalOnly(true));
+    }
+
+    protected <T extends BaseInternalMessage> void registerConsumer(final String address) {
+        vertx.eventBus().<T>consumer(address, this::messageHandler);
     }
 
     /**
      * Implementation is for demo purposes only.
      * It lacks several optimizations (pre-caching of handlers, handler search in parent classes, etc.)
+     *
      * @param tMessage message to handle
-     * @param <T> type of message data
+     * @param <T>      type of message data
      */
-    private <T> void messageHandler(final Message<T> tMessage) {
+    private <T extends BaseInternalMessage> void messageHandler(final Message<T> tMessage) {
         final var data = tMessage.body();
         if (data != null) {
             final var dataClass = data.getClass();

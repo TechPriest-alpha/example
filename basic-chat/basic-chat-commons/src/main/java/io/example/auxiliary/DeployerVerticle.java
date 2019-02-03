@@ -1,6 +1,7 @@
 package io.example.auxiliary;
 
 import io.example.auxiliary.annotations.SpringVerticle;
+import io.example.auxiliary.eventbus.BaseCodec;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
@@ -21,6 +22,7 @@ public class DeployerVerticle extends AbstractVerticle {
     public void start(final Future<Void> startFuture) {
         this.ctx = new AnnotationConfigApplicationContext(System.getProperty(Constants.CFG_PACKAGE_CONFIG_NAME));
         vertx.registerVerticleFactory(new SpringVerticleFactory(ctx));
+        vertx.eventBus().registerCodec(new BaseCodec());
         final List<Future> deployments = ctx.getBeansWithAnnotation(SpringVerticle.class).entrySet().stream().map(entry -> {
             val name = entry.getKey();
             val bean = entry.getValue();

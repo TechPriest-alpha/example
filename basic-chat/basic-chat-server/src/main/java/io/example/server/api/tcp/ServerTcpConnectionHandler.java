@@ -1,6 +1,6 @@
 package io.example.server.api.tcp;
 
-import io.example.auxiliary.dto.ChatMessage;
+import io.example.auxiliary.message.chat.ChatMessage;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.net.NetSocket;
@@ -12,6 +12,7 @@ public class ServerTcpConnectionHandler implements Handler<NetSocket> {
 
     @Override
     public void handle(final NetSocket netSocket) {
+        netSocket.pause();
         netSocket.handler(new DataHandler());
         netSocket.write(Json.encode(new ChatMessage("Hello from Server")));
         log.info("Client {} connected", "clientId");
