@@ -16,6 +16,10 @@
             <groupId>example.io</groupId>
             <artifactId>basic-chat-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
     </dependencies>
 
