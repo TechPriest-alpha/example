@@ -2,7 +2,7 @@ package io.example.auxiliary;
 
 import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.errors.GeneralInternalError;
-import io.example.auxiliary.errors.NoHandlerFound;
+import io.example.auxiliary.errors.NoHandlerFoundError;
 import io.example.auxiliary.eventbus.BaseDeliveryOptions;
 import io.example.auxiliary.message.internal.BaseInternalMessage;
 import io.vertx.core.AbstractVerticle;
@@ -24,6 +24,10 @@ public abstract class BaseVerticle extends AbstractVerticle {
 
     protected <T extends BaseInternalMessage> void sendMessage(final String address, final T message) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions());
+    }
+
+    protected <T extends BaseInternalMessage> void publishMessage(final String address, final T message) {
+        vertx.eventBus().publish(address, message, new BaseDeliveryOptions());
     }
 
     protected <T extends BaseInternalMessage> void sendMessageLocally(final String address, final T message) {
@@ -55,7 +59,7 @@ public abstract class BaseVerticle extends AbstractVerticle {
                     .filter(method -> method.getParameterCount() == 1)
                     .filter(method -> method.getParameterTypes()[0].isAssignableFrom(dataClass))
                     .findFirst()
-                    .orElseThrow(() -> new NoHandlerFound("No handler found on " + this.getClass().getSimpleName() + " for " + dataClass));
+                    .orElseThrow(() -> new NoHandlerFoundError("No handler found on " + this.getClass().getSimpleName() + " for " + dataClass));
                 final var handle = unreflect(handlerMethod);
                 FOUND_HANDLERS.putIfAbsent(dataClass, handle);
                 handleMessage(data, handle);

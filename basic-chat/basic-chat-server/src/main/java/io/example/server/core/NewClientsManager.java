@@ -12,17 +12,19 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.impl.ConcurrentHashSet;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 
 @SpringVerticle(instances = 10)
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class NewClientsManager extends BaseVerticle {
     private static final Logger log = LoggerFactory.getLogger(NewClientsManager.class);
-    private static final ConcurrentHashSet<String> REGISTERED_CLIENTS = new ConcurrentHashSet<>();
+
+    private final MessageStorage messageStorage;
 
     @Override
     public void start(final Future<Void> startFuture) throws Exception {
@@ -39,7 +41,7 @@ public class NewClientsManager extends BaseVerticle {
     }
 
     @RequiredArgsConstructor
-    private static class Authenticator implements Handler<Buffer> {
+    private class Authenticator implements Handler<Buffer> {
         private final Vertx vertx;
         private final NewClient authenticatingClient;
 
@@ -47,13 +49,14 @@ public class NewClientsManager extends BaseVerticle {
         public void handle(final Buffer event) {
             final var authResponse = authenticatingClient.decode(event, AuthenticationResponse.class);
 
-            if (REGISTERED_CLIENTS.contains(authResponse.getClientId())) {
-                authenticatingClient.sendToClient(new AuthenticationResult("Name already in use", AuthVerdict.NAME_ALREADY_REGISTERED));
+            final var clientId = authResponse.getClientId();
+            if (messageStorage.containsClient(clientId)) {
+                authenticatingClient.sendToClient(new AuthenticationResult("Name already in use", AuthVerdict.NAME_ALREADY_REGISTERED, clientId));
                 log.info("Client response to auth request: {} is already in use", authResponse);
             } else {
-                REGISTERED_CLIENTS.add(authResponse.getClientId());
-                authenticatingClient.sendToClient(new AuthenticationResult("Name already in use", AuthVerdict.SUCCESS, Collections.emptyList()));
-                vertx.deployVerticle(new ConnectedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)));
+                messageStorage.addClient(clientId);
+                authenticatingClient.sendToClient(new AuthenticationResult("Welcome " + clientId, AuthVerdict.SUCCESS, clientId, Collections.emptyList()));
+                vertx.deployVerticle(new AuthenticatedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)));
                 log.debug("Client response to auth request: {} registered as new client", authResponse);
             }
         }

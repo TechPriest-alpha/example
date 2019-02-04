@@ -41,7 +41,7 @@ class JsonMessageConverterTest {
 
     @Test
     void basicMessageEncode_Decode() {
-        final var authRequest = new ChatMessage("auth request");
+        final var authRequest = new ChatMessage("auth request", "testClient");
         final var encodedString = converter.encode(authRequest);
         final var decodedFromString = converter.decode(encodedString, ChatMessage.class);
         final var encodedBuffer = Buffer.buffer(encodedString);

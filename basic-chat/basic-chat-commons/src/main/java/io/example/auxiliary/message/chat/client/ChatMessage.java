@@ -13,6 +13,7 @@ import java.time.Instant;
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class ChatMessage implements BaseChatMessage {
     private final String message;
+    private final String clientId;
     private final MessageType messageType = MessageType.CHAT_TEXT;
     private final Instant messageTime = Instant.now();
 }

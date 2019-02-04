@@ -1,4 +1,4 @@
-package io.example.client.api.handling;
+package io.example.auxiliary.message;
 
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import lombok.Getter;

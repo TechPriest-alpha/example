@@ -1,33 +1,27 @@
 package io.example.auxiliary.message.chat.server;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.types.AuthVerdict;
 import io.example.auxiliary.message.chat.types.MessageType;
-import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 import java.util.List;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
-public class AuthenticationResult extends ChatMessage {
+public class AuthenticationResult implements BaseChatMessage {
     private final MessageType messageType = MessageType.AUTHENTICATION_RESULT;
-
+    private final String message;
     private final AuthVerdict verdict;
+    private final String clientId;
     private final List<ChatMessage> lastMessages;
 
-    @ConstructorProperties({"message", "verdict", "lastMessages"})
-    public AuthenticationResult(final String message, final AuthVerdict verdict, final List<ChatMessage> lastMessages) {
-        super(message);
-        this.verdict = verdict;
-        this.lastMessages = lastMessages;
-    }
-
-    public AuthenticationResult(final String message, final AuthVerdict verdict) {
-        this(message, verdict, Collections.emptyList());
+    public AuthenticationResult(final String message, final AuthVerdict verdict, final String clientId) {
+        this(message, verdict, clientId, Collections.emptyList());
     }
 }

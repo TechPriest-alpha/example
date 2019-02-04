@@ -9,7 +9,7 @@ import io.vertx.core.net.NetClientOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringVerticle(instances = 20)
+@SpringVerticle(instances = 1)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ChatTcpClient extends BaseVerticle {
 
