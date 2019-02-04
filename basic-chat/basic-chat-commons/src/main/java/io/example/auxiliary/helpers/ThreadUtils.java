@@ -3,6 +3,8 @@ package io.example.auxiliary.helpers;
 import io.example.auxiliary.errors.GeneralInternalError;
 import lombok.experimental.UtilityClass;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @UtilityClass
 public class ThreadUtils {
 
@@ -12,5 +14,9 @@ public class ThreadUtils {
         } catch (final Exception ex) {
             throw new GeneralInternalError(ex);
         }
+    }
+
+    public static void awaitRandom(final int minDelay, final int maxDelay) {
+        await(ThreadLocalRandom.current().nextInt(minDelay, maxDelay));
     }
 }

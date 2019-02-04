@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.beans.ConstructorProperties;
+import java.util.Collections;
 import java.util.List;
 
 @Value
@@ -24,5 +25,9 @@ public class AuthenticationResult extends ChatMessage {
         super(message);
         this.verdict = verdict;
         this.lastMessages = lastMessages;
+    }
+
+    public AuthenticationResult(final String message, final AuthVerdict verdict) {
+        this(message, verdict, Collections.emptyList());
     }
 }

@@ -6,6 +6,8 @@ import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.AuthVerdict;
+import io.example.client.api.handling.DataHandler;
+import io.example.client.api.handling.ServerConnection;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
@@ -27,7 +29,7 @@ class DataHandlerTest {
         Json.mapper.enableDefaultTyping();
         this.socket = Mockito.spy(new ServerConnection(Mockito.mock(NetSocket.class), new JsonMessageConverter()));
         this.vertx = Vertx.vertx();
-        this.dataHandler = new DataHandler(socket, Vertx.vertx());
+        this.dataHandler = new DataHandler(socket, Vertx.vertx(), "testClient");
     }
 
     @AfterEach

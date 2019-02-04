@@ -1,4 +1,4 @@
-package io.example.client.api;
+package io.example.client.api.handling;
 
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.ChatMessage;
@@ -13,6 +13,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class utilizes dirty trick to simplify decoding of JSON messages with varying types.
+ * Known message types that would come from server are stored and incoming data is checked against known types by classname.
+ */
 @RequiredArgsConstructor
 public class ServerConnection {
     private static final List<SupportedMessage<? extends BaseChatMessage>> supportedMessageTypes = Arrays.asList(

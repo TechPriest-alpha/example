@@ -16,4 +16,8 @@ public class ClientInfo implements ClientConnectionCommons {
     public void chatHandler(final Handler<Buffer> chatHandler) {
         clientConnection.handler(chatHandler);
     }
+
+    public void disconnectHandler(final Handler<Void> disconnectHandler) {
+        clientConnection.closeHandler(disconnectHandler);
+    }
 }

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-@SpringVerticle
+@SpringVerticle(instances = 100)
 public class TcpServer extends BaseVerticle {
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
@@ -31,7 +31,7 @@ public class TcpServer extends BaseVerticle {
         vertx.createNetServer(serverOptions)
             .connectHandler(newConnection -> {
                 sendMessageLocally(Routing.NEW_CLIENTS_MANAGER, new NewClient(newConnection, messageConverter));
-                log.info("New connection received form: {}", newConnection.remoteAddress());
+                log.debug("New connection received form: {}", newConnection.remoteAddress());
             })
             .listen();
         super.start(startFuture);
