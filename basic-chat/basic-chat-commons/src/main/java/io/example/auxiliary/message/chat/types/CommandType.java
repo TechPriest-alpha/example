@@ -1,7 +1,7 @@
 package io.example.auxiliary.message.chat.types;
 
 public enum CommandType {
-    HELP("!help"), STATS("!stats"), NONE("");
+    HELP("!help"), STATS("!stats"), LEAVE("!leave"), NONE("");
 
     private final String prefix;
 
@@ -20,5 +20,9 @@ public enum CommandType {
             }
         }
         return NONE;
+    }
+
+    public boolean isNotLeave() {
+        return LEAVE != this;
     }
 }

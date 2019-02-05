@@ -1,9 +1,9 @@
-package io.example.client.api;
+package io.example.client.api.server;
 
 import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.SpringVerticle;
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
-import io.example.client.api.handling.ChatClientHandler;
+import io.example.client.api.server.handling.ChatClientHandler;
 import io.vertx.core.Future;
 import io.vertx.core.net.NetClientOptions;
 import lombok.RequiredArgsConstructor;

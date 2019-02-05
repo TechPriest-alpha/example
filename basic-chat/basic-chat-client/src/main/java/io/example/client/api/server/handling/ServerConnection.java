@@ -1,4 +1,4 @@
-package io.example.client.api.handling;
+package io.example.client.api.server.handling;
 
 import io.example.auxiliary.helpers.ConversionCommons;
 import io.example.auxiliary.message.SupportedMessage;

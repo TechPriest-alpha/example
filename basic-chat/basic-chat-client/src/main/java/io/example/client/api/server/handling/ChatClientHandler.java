@@ -1,7 +1,7 @@
-package io.example.client.api.handling;
+package io.example.client.api.server.handling;
 
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
-import io.example.client.core.ConsoleUserDataHandler;
+import io.example.client.core.UserDataHandler;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -20,7 +20,9 @@ public class ChatClientHandler implements Handler<AsyncResult<NetSocket>> {
     public void handle(final AsyncResult<NetSocket> event) {
         if (event.succeeded()) {
             final var socket = event.result();
-            socket.handler(new ConsoleUserDataHandler(new ServerConnection(socket, messageConverter), vertx));
+            final var dataHandler = new UserDataHandler(new ServerConnection(socket, messageConverter));
+            vertx.deployVerticle(dataHandler);
+            socket.handler(dataHandler);
         } else {
             log.error("Error when connecting", event.cause());
         }

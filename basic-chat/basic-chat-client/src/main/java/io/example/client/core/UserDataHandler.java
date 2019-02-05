@@ -1,5 +1,7 @@
 package io.example.client.core;
 
+import io.example.auxiliary.BaseVerticle;
+import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatCommand;
@@ -7,75 +9,77 @@ import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.CommandType;
-import io.example.client.api.handling.ChatClientHandler;
-import io.example.client.api.handling.ServerConnection;
+import io.example.client.Routing;
+import io.example.client.api.server.handling.ChatClientHandler;
+import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.messages.OutputMessage;
+import io.example.client.messages.StopConsole;
+import io.example.client.messages.UserInputMessage;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import lombok.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Value
-public class ConsoleUserDataHandler implements Handler<Buffer> {
+public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
     private final ServerConnection serverConnection;
-    private final Vertx vertx;
-    private final ExecutorService ioExecutor;
     private final AtomicReference<String> clientId = new AtomicReference<>();
     private final AtomicReference<ClientState> clientState = new AtomicReference<>(ClientState.CONNECTED);
 
-    public ConsoleUserDataHandler(final ServerConnection serverConnection, final Vertx vertx) {
+    public UserDataHandler(final ServerConnection serverConnection) {
         this.serverConnection = serverConnection;
-        this.vertx = vertx;
-        this.ioExecutor = Executors.newSingleThreadExecutor();
         serverConnection.onClose(handler -> stopClient());
-        startIo();
     }
 
-    private void startIo() {
-        ioExecutor.submit(() -> {
-            String userInput;
-            do {
-                userInput = System.console().readLine().trim();
-                handleUserInput(userInput);
-                log.info("Got next userInput '{}'", userInput);
-            } while (!"leave".equalsIgnoreCase(userInput));
-            serverConnection.close();
-        });
+    @Override
+    public void start(final Future<Void> startFuture) throws Exception {
+        registerConsumer(Routing.USER_DATA_HANDLER);
+        super.start(startFuture);
     }
 
-    private void stopClient() {
-        vertx.close(onClose -> {
-            log.info("User left or server stopped, closing client: {}", onClose.succeeded());
-            System.exit(0); //TDB: may there is a better way
-        });
-    }
-
-    private void handleUserInput(final String userInput) {
+    @HandlerMethod
+    public void handleUserInput(final UserInputMessage userInput) {
         switch (clientState.get()) {
             case AUTHENTICATING:
-                serverConnection.sendMessage(new AuthenticationResponse(userInput));
+                serverConnection.sendMessage(new AuthenticationResponse(userInput.getUserInput()));
                 break;
             case CONNECTED:
                 log.warn("Client authentication is not complete, user input discarded");
                 break;
+            case DISCONECTING:
+                log.info("Client is disconnecting, user input discarded");
+                break;
             case ACTIVE:
-                handleMessageOrCommand(userInput);
+                handleMessageOrCommand(userInput.getUserInput());
                 break;
         }
     }
 
+    private void stopClient() {
+        sendMessage(Routing.CONSOLE_CLIENT, new StopConsole(), onDelivery -> vertx.close(onClose -> {
+            log.info("User left or server stopped, closing client: {}", onClose.succeeded());
+            System.exit(0); //TDB: may there is a better way
+        }));
+
+    }
+
     private void handleMessageOrCommand(final String userInput) {
         final var command = CommandType.getByPrefix(userInput);
-        if (command.isNone()) {
-            serverConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
-        } else {
-            serverConnection.sendMessage(new ChatCommand(command));
+        switch (command) {
+            case HELP:
+            case STATS:
+                serverConnection.sendMessage(new ChatCommand(command));
+                break;
+            case LEAVE:
+                clientState.set(ClientState.DISCONECTING);
+                serverConnection.close();
+                break;
+            case NONE:
+                serverConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
+                break;
         }
     }
 
@@ -123,8 +127,7 @@ public class ConsoleUserDataHandler implements Handler<Buffer> {
     }
 
     private void outputMessage(final String message) {
-        System.out.println(message);
-//        System.console().flush();
+        sendMessage(Routing.CONSOLE_CLIENT, new OutputMessage(message));
     }
 
 }

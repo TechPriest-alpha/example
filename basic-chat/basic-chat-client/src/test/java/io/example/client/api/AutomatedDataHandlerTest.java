@@ -6,7 +6,7 @@ import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.AuthVerdict;
-import io.example.client.api.handling.ServerConnection;
+import io.example.client.api.server.handling.ServerConnection;
 import io.example.client.core.AutomatedDataHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -45,7 +45,7 @@ class AutomatedDataHandlerTest {
         automatedDataHandler.handle(authenticationRequest);
         Mockito.verify(socket).sendMessage(Mockito.any(AuthenticationResponse.class));
         automatedDataHandler.handle(authenticationResult);
-        Mockito.verify(socket, Mockito.timeout(22000).times(10)).sendMessage(Mockito.any(ChatMessage.class));
+        Mockito.verify(socket, Mockito.timeout(22000).atLeast(10)).sendMessage(Mockito.any(ChatMessage.class));
     }
 
     @Test

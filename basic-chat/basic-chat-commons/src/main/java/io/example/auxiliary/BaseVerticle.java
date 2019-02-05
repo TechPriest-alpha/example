@@ -6,6 +6,8 @@ import io.example.auxiliary.errors.NoHandlerFoundError;
 import io.example.auxiliary.eventbus.BaseDeliveryOptions;
 import io.example.auxiliary.message.internal.BaseInternalMessage;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,12 @@ public abstract class BaseVerticle extends AbstractVerticle {
 
     protected <T extends BaseInternalMessage> void sendMessage(final String address, final T message) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions());
+    }
+
+    protected <T extends BaseInternalMessage> void sendMessage(
+        final String address, final T message, final Handler<AsyncResult<Message<T>>> replyHandler
+    ) {
+        vertx.eventBus().send(address, message, new BaseDeliveryOptions(), replyHandler);
     }
 
     protected <T extends BaseInternalMessage> void publishMessage(final String address, final T message) {
@@ -64,6 +72,7 @@ public abstract class BaseVerticle extends AbstractVerticle {
                 FOUND_HANDLERS.putIfAbsent(dataClass, handle);
                 handleMessage(data, handle);
             }
+            tMessage.reply("HANDLED");
         }
     }
 
