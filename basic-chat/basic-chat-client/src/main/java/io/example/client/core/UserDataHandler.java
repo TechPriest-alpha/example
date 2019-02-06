@@ -73,7 +73,7 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
         switch (command) {
             case HELP:
             case STATS:
-                serverConnection.sendMessage(new ChatCommand(command));
+                serverConnection.sendMessage(new ChatCommand(clientId.get(), command));
                 break;
             case LEAVE:
                 clientState.set(ClientState.DISCONECTING);

@@ -6,6 +6,7 @@ import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
 import io.example.server.data.AuthenticatedClient;
+import io.example.server.data.CommandResponse;
 import io.example.server.data.DisconnectedClient;
 import io.example.server.data.NewChatMessage;
 import io.example.server.data.NewCommandMessage;
@@ -13,17 +14,19 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor
 public class AuthenticatedClientManager extends BaseServerVerticle {
     private final AuthenticatedClient authenticatedClient;
-    private int messageCount;
 
     @Override
     public void start(final Future<Void> startFuture) throws Exception {
         registerConsumer(Routing.CONNECTED_CLIENT_MANAGERS); //for chat message publishing
         registerConsumer(Routing.CONNECTED_CLIENT_MANAGERS + "." + authenticatedClient.getClientId()); //for commands callback
-        authenticatedClient.chatHandler(new ChatHandler());
+        authenticatedClient.chatHandler(new ChatHandler(this));
         authenticatedClient.disconnectHandler(onDisconnect -> {
             sendMessage(Routing.MESSAGE_STORAGE, new DisconnectedClient(authenticatedClient.getClientId()));
             vertx.undeploy(deploymentID());
@@ -39,12 +42,29 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
         }
     }
 
-    @RequiredArgsConstructor
-    private final class ChatHandler implements Handler<Buffer> {
+    @HandlerMethod
+    public void onCommandResponse(final CommandResponse commandResponse) {
+        if (!commandResponse.getClientId().equals(authenticatedClient.getClientId())) {
+            log.warn("Command response {} directed to wrong client {}", commandResponse, authenticatedClient.getClientId());
+        } else {
+            authenticatedClient.sendToClient(commandResponse.getChatMessage());
+        }
+    }
+
+    @Slf4j
+    public static final class ChatHandler implements Handler<Buffer> {
+        private final AtomicLong messageCount = new AtomicLong(0L);
+        private final AuthenticatedClientManager authenticatedClientManager;
+        private final AuthenticatedClient client;
+
+        ChatHandler(final AuthenticatedClientManager authenticatedClientManager) {
+            this.authenticatedClientManager = authenticatedClientManager;
+            this.client = authenticatedClientManager.authenticatedClient;
+        }
 
         @Override
         public void handle(final Buffer event) {
-            final var chatMessage = authenticatedClient.decode(event);
+            final var chatMessage = client.decode(event);
             switch (chatMessage.getMessageType()) {
                 case AUTHENTICATION_REQUEST:
                 case AUTHENTICATION_RESPONSE:
@@ -54,23 +74,35 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
                     handleChatMessage((ChatMessage) chatMessage);
                     break;
                 case COMMAND:
-                    sendMessage(Routing.COMMAND_HANDLER, new NewCommandMessage(authenticatedClient.getClientId(), (ChatCommand) chatMessage));
+                    handleCommand((ChatCommand) chatMessage);
                     break;
             }
         }
 
         private void handleChatMessage(final ChatMessage chatMessage) {
-            final var newChatMessage = new NewChatMessage(authenticatedClient.getClientId(), chatMessage);
-            publishMessage(Routing.CONNECTED_CLIENT_MANAGERS, newChatMessage);
-            sendMessageLocally(Routing.MESSAGE_STORAGE, newChatMessage);
+            if (!chatMessage.getClientId().equals(client.getClientId())) {
+                log.warn("Received message from wrong client: {}, currentId: {}", chatMessage, client.getClientId());
+                return;
+            }
+            final var newChatMessage = new NewChatMessage(client.getClientId(), chatMessage);
+            authenticatedClientManager.publishMessage(Routing.CONNECTED_CLIENT_MANAGERS, newChatMessage);
+            authenticatedClientManager.sendMessageLocally(Routing.MESSAGE_STORAGE, newChatMessage);
             logBasicStats(chatMessage);
         }
 
+        private void handleCommand(final ChatCommand chatCommand) {
+            if (!chatCommand.getClientId().equals(client.getClientId())) {
+                log.warn("Received command from wrong client: {}, currentId: {}", chatCommand, client.getClientId());
+                return;
+            }
+            authenticatedClientManager.sendMessage(Routing.COMMAND_HANDLER, new NewCommandMessage(client.getClientId(), chatCommand));
+        }
+
         private void logBasicStats(final ChatMessage chatMessage) {
-            messageCount++;
-            log.debug("{} New chat message: {}", authenticatedClient.getClientId(), chatMessage);
-            if (messageCount % 100 == 0) {
-                log.info("{} sent {} messages", authenticatedClient.getClientId(), messageCount);
+
+            log.debug("{} New chat message: {}", client.getClientId(), chatMessage);
+            if (messageCount.incrementAndGet() % 100 == 0) {
+                log.info("{} sent {} messages", client.getClientId(), messageCount);
             }
         }
     }

@@ -2,7 +2,9 @@ package io.example.auxiliary.eventbus;
 
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.json.JsonObject;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 public class BaseDeliveryOptions extends DeliveryOptions {
     public BaseDeliveryOptions() {
         super();

@@ -29,4 +29,16 @@ public abstract class BaseChatMessage {
 
     public abstract MessageType getMessageType();
 
+    public static final BaseChatMessage NULL_MESSAGE = new BaseChatMessage() {
+        @Override
+        protected String messageKey() {
+            return null;
+        }
+
+        @Override
+        public MessageType getMessageType() {
+            return MessageType.NONE;
+        }
+    };
+
 }

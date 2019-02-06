@@ -4,11 +4,15 @@ import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.annotations.SpringVerticle;
 import io.example.auxiliary.message.ClientId;
+import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.server.Routing;
 import io.example.server.data.DisconnectedClient;
 import io.example.server.data.NewChatMessage;
 import io.vertx.core.Future;
 import io.vertx.core.impl.ConcurrentHashSet;
+
+import java.util.Collections;
+import java.util.List;
 
 @SpringVerticle(instances = 1)
 public class DataStorage extends BaseVerticle {
@@ -36,5 +40,9 @@ public class DataStorage extends BaseVerticle {
 
     public void addClient(final ClientId clientId) {
         REGISTERED_CLIENTS.add(clientId);
+    }
+
+    public List<ChatMessage> lastMessages() {
+        return Collections.emptyList();
     }
 }

@@ -6,7 +6,7 @@ import io.example.auxiliary.message.internal.BaseInternalMessage;
 import lombok.Value;
 
 @Value
-public class NewChatMessage implements BaseInternalMessage {
+public class CommandResponse implements BaseInternalMessage {
     private final ClientId clientId;
     private final BaseChatMessage chatMessage;
 }

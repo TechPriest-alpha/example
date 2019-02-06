@@ -24,7 +24,7 @@ public interface ConversionCommons {
             .filter(supportedMessage -> data.toString().toLowerCase().startsWith(supportedMessage.getClassName()))
             .findFirst()
             .map(supportedMessage -> Json.decodeValue(data, supportedMessage.getCls()))
-            .orElseThrow();
+            .orElse(BaseChatMessage.NULL_MESSAGE);
     }
 
     List<SupportedMessage> getSupportedMessageTypes();
