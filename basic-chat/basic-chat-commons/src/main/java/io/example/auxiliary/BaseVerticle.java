@@ -42,6 +42,13 @@ public abstract class BaseVerticle extends AbstractVerticle {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions().setLocalOnly(true));
     }
 
+
+    protected <T extends BaseInternalMessage> void sendMessageLocally(
+        final String address, final T message, final Handler<AsyncResult<Message<T>>> replyHandler
+    ) {
+        vertx.eventBus().send(address, message, new BaseDeliveryOptions().setLocalOnly(true), replyHandler);
+    }
+
     protected <T extends BaseInternalMessage> void registerConsumer(final String address) {
         vertx.eventBus().<T>consumer(address, this::messageHandler);
     }

@@ -7,6 +7,7 @@ import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatCommand;
 import io.example.auxiliary.message.chat.client.ChatMessage;
+import io.example.auxiliary.message.chat.client.UnknownChatCommand;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.auxiliary.message.chat.types.CommandType;
@@ -27,11 +28,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
     private final ServerConnection serverConnection;
+    private final boolean allowUnknownCommands;
+
     private final AtomicReference<ClientId> clientId = new AtomicReference<>();
     private final AtomicReference<ClientState> clientState = new AtomicReference<>(ClientState.CONNECTED);
 
-    public UserDataHandler(final ServerConnection serverConnection) {
+    public UserDataHandler(final ServerConnection serverConnection, final boolean allowUnknownCommands) {
         this.serverConnection = serverConnection;
+        this.allowUnknownCommands = allowUnknownCommands;
         serverConnection.onClose(handler -> stopClient());
     }
 
@@ -61,7 +65,7 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     }
 
     private void stopClient() {
-        sendMessage(Routing.CONSOLE_CLIENT, new StopConsole(), onDelivery -> vertx.close(onClose -> {
+        sendMessageLocally(Routing.CONSOLE_CLIENT, new StopConsole(), onDelivery -> vertx.close(onClose -> {
             log.info("User left or server stopped, closing client: {}", onClose.succeeded());
             System.exit(0); //TDB: may there is a better way
         }));
@@ -79,9 +83,19 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
                 clientState.set(ClientState.DISCONECTING);
                 serverConnection.close();
                 break;
-            case NONE:
-                serverConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
+            case UNKNOWN:
+                handleUnknownCommand(userInput);
                 break;
+        }
+    }
+
+    private void handleUnknownCommand(final String userInput) {
+        if (allowUnknownCommands) {
+            serverConnection.sendMessage(new UnknownChatCommand(userInput, clientId.get()));
+            log.info("Unknown command sent to server: {}", userInput);
+        } else {
+            outputMessage("Command unknown: '" + userInput + "'");
+            log.info("Unknown commands prohibited.");
         }
     }
 

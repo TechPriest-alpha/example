@@ -15,12 +15,13 @@ public class ChatClientHandler implements Handler<AsyncResult<NetSocket>> {
     private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
     private final Vertx vertx;
     private final MessageConverter messageConverter;
+    private final boolean allowUnknownCommands;
 
     @Override
     public void handle(final AsyncResult<NetSocket> event) {
         if (event.succeeded()) {
             final var socket = event.result();
-            final var dataHandler = new UserDataHandler(new ServerConnection(socket, messageConverter));
+            final var dataHandler = new UserDataHandler(new ServerConnection(socket, messageConverter), allowUnknownCommands);
             vertx.deployVerticle(dataHandler);
             socket.handler(dataHandler);
         } else {

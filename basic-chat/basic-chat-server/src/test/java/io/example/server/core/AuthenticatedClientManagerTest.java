@@ -114,7 +114,7 @@ class AuthenticatedClientManagerTest {
     @DisplayName("Command sent to command handler")
     void commandSentToHandler() {
         final var handler = new AuthenticatedClientManager.ChatHandler(authenticatedClientManager);
-        final var command = new ChatCommand(testClient, CommandType.NONE);
+        final var command = new ChatCommand(testClient, CommandType.UNKNOWN);
         final var newCommandMessage = new NewCommandMessage(testClient, command);
         handler.handle(Json.encodeToBuffer(command));
         Mockito.verify(eventBus).send(Mockito.eq(Routing.COMMAND_HANDLER), Mockito.eq(newCommandMessage), Mockito.any(BaseDeliveryOptions.class));
@@ -126,7 +126,7 @@ class AuthenticatedClientManagerTest {
         final var handler = new AuthenticatedClientManager.ChatHandler(authenticatedClientManager);
         final var otherClient = new ClientId("otherTestClient");
 
-        final var command = new ChatCommand(otherClient, CommandType.NONE);
+        final var command = new ChatCommand(otherClient, CommandType.UNKNOWN);
         final var newCommandMessage = new NewCommandMessage(otherClient, command);
         final var wrongCommandMessage = new NewCommandMessage(testClient, command);
         handler.handle(Json.encodeToBuffer(command));

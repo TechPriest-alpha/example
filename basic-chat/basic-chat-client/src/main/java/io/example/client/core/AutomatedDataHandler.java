@@ -5,7 +5,6 @@ import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
-import io.example.client.api.server.handling.ChatClientHandler;
 import io.example.client.api.server.handling.ServerConnection;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Value
 public class AutomatedDataHandler implements Handler<Buffer> {
-    private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(AutomatedDataHandler.class);
     private final ServerConnection serverConnection;
     private final Vertx vertx;
     private final ClientId clientId;

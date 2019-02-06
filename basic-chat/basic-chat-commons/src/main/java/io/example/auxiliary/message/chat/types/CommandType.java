@@ -1,7 +1,7 @@
 package io.example.auxiliary.message.chat.types;
 
 public enum CommandType {
-    HELP("!help"), STATS("!stats"), LEAVE("!leave"), NONE("");
+    HELP("!help"), STATS("!stats"), LEAVE("!leave"), UNKNOWN("");
 
     private final String prefix;
 
@@ -9,8 +9,8 @@ public enum CommandType {
         this.prefix = prefix;
     }
 
-    public boolean isNone() {
-        return NONE == this;
+    public boolean isUnknown() {
+        return UNKNOWN == this;
     }
 
     public static CommandType getByPrefix(final String userInput) {
@@ -19,7 +19,7 @@ public enum CommandType {
                 return cmd;
             }
         }
-        return NONE;
+        return UNKNOWN;
     }
 
     public boolean isNotLeave() {
