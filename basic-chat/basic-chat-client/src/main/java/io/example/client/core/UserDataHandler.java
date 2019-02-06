@@ -2,12 +2,13 @@ package io.example.client.core;
 
 import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.HandlerMethod;
+import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatCommand;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
-import io.example.auxiliary.message.chat.server.AuthenticationResult;
+import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.client.Routing;
 import io.example.client.api.server.handling.ChatClientHandler;
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
     private final ServerConnection serverConnection;
-    private final AtomicReference<String> clientId = new AtomicReference<>();
+    private final AtomicReference<ClientId> clientId = new AtomicReference<>();
     private final AtomicReference<ClientState> clientState = new AtomicReference<>(ClientState.CONNECTED);
 
     public UserDataHandler(final ServerConnection serverConnection) {
@@ -44,7 +45,8 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     public void handleUserInput(final UserInputMessage userInput) {
         switch (clientState.get()) {
             case AUTHENTICATING:
-                serverConnection.sendMessage(new AuthenticationResponse(userInput.getUserInput()));
+                final var clientId = new ClientId(userInput.getUserInput());
+                serverConnection.sendMessage(new AuthenticationResponse(clientId));
                 break;
             case CONNECTED:
                 log.warn("Client authentication is not complete, user input discarded");
@@ -92,7 +94,7 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
                 handleAuthenticationRequest((AuthenticationRequest) messageFromServer);
                 break;
             case AUTHENTICATION_RESULT:
-                handleAuthenticationResult((AuthenticationResult) messageFromServer);
+                handleAuthenticationResult((AuthenticationResultSuccess) messageFromServer);
                 break;
             case CHAT_TEXT:
                 handleNewChatMessage((ChatMessage) messageFromServer);
@@ -105,7 +107,7 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
     }
 
     private void handleNewChatMessage(final ChatMessage messageFromServer) {
-        outputMessage(messageFromServer.getClientId() + ":" + messageFromServer.getMessage());
+        outputMessage(messageFromServer.getClientId() + ": " + messageFromServer.getMessage());
     }
 
     private void handleAuthenticationRequest(final AuthenticationRequest messageFromServer) {
@@ -114,7 +116,7 @@ public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
         log.info("Authentication request received");
     }
 
-    private void handleAuthenticationResult(final AuthenticationResult authenticationResult) {
+    private void handleAuthenticationResult(final AuthenticationResultSuccess authenticationResult) {
         outputMessage(authenticationResult.getMessage());
         if (authenticationResult.getVerdict().success()) {
             clientId.set(authenticationResult.getClientId());

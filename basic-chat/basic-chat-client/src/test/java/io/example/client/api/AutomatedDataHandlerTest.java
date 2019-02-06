@@ -1,11 +1,12 @@
 package io.example.client.api;
 
+import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
-import io.example.auxiliary.message.chat.server.AuthenticationResult;
-import io.example.auxiliary.message.chat.types.AuthVerdict;
+import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
+import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.client.api.server.handling.ServerConnection;
 import io.example.client.core.AutomatedDataHandler;
 import io.vertx.core.Vertx;
@@ -39,9 +40,9 @@ class AutomatedDataHandlerTest {
 
     @Test
     void clientSuccessAuth() {
-        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest("authentication request")));
-        final var clientId = "successClientId";
-        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResult("good", AuthVerdict.SUCCESS, clientId, Collections.emptyList())));
+        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest()));
+        final var clientId = new ClientId("successClientId");
+        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultSuccess(clientId, Collections.emptyList())));
         automatedDataHandler.handle(authenticationRequest);
         Mockito.verify(socket).sendMessage(Mockito.any(AuthenticationResponse.class));
         automatedDataHandler.handle(authenticationResult);
@@ -50,9 +51,9 @@ class AutomatedDataHandlerTest {
 
     @Test
     void clientFailedAuth() {
-        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest("authentication request")));
-        final var clientId = "failedClientId";
-        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResult("bad", AuthVerdict.NAME_ALREADY_REGISTERED, clientId, Collections.emptyList())));
+        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest()));
+        final var clientId = new ClientId("failedClientId");
+        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultFailure(clientId)));
         automatedDataHandler.handle(authenticationRequest);
         Mockito.verify(socket).sendMessage(Mockito.any(AuthenticationResponse.class));
         automatedDataHandler.handle(authenticationResult);

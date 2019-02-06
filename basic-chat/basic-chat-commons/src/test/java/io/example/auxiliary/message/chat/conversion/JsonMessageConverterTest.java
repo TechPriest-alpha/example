@@ -1,5 +1,6 @@
 package io.example.auxiliary.message.chat.conversion;
 
+import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
@@ -19,7 +20,7 @@ class JsonMessageConverterTest {
 
     @Test
     void authRequestEncode_Decode() {
-        final var authRequest = new AuthenticationRequest("auth request");
+        final var authRequest = new AuthenticationRequest();
         final var encodedString = converter.encode(authRequest);
         final var decodedFromString = converter.decode(encodedString, AuthenticationRequest.class);
         final var encodedBuffer = Buffer.buffer(encodedString);
@@ -30,7 +31,7 @@ class JsonMessageConverterTest {
 
     @Test
     void authResponseEncode_Decode() {
-        final var authRequest = new AuthenticationResponse("auth response");
+        final var authRequest = new AuthenticationResponse(new ClientId("auth response"));
         final var encodedString = converter.encode(authRequest);
         final var decodedFromString = converter.decode(encodedString, AuthenticationResponse.class);
         final var encodedBuffer = Buffer.buffer(encodedString);
@@ -41,7 +42,7 @@ class JsonMessageConverterTest {
 
     @Test
     void basicMessageEncode_Decode() {
-        final var authRequest = new ChatMessage("auth request", "testClient");
+        final var authRequest = new ChatMessage("auth request", new ClientId("testClient"));
         final var encodedString = converter.encode(authRequest);
         final var decodedFromString = converter.decode(encodedString, ChatMessage.class);
         final var encodedBuffer = Buffer.buffer(encodedString);

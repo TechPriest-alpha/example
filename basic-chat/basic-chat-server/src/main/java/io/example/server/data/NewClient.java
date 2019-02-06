@@ -23,8 +23,8 @@ public class NewClient implements ClientConnectionCommons, BaseInternalMessage {
     private final NetSocket clientConnection;
     private final MessageConverter messageConverter;
 
-    public void sendAuthenticationRequest(final String authMessageText) {
-        sendToClient(new AuthenticationRequest(authMessageText));
+    public void sendAuthenticationRequest() {
+        sendToClient(new AuthenticationRequest());
     }
 
     public void authenticationHandler(final Handler<Buffer> authenticator) {

@@ -1,9 +1,10 @@
 package io.example.client.core;
 
+import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
-import io.example.auxiliary.message.chat.server.AuthenticationResult;
+import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
 import io.example.client.api.server.handling.ChatClientHandler;
 import io.example.client.api.server.handling.ServerConnection;
 import io.vertx.core.Handler;
@@ -21,12 +22,12 @@ public class AutomatedDataHandler implements Handler<Buffer> {
     private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
     private final ServerConnection serverConnection;
     private final Vertx vertx;
-    private final String clientId;
+    private final ClientId clientId;
 
     public AutomatedDataHandler(final ServerConnection serverConnection, final Vertx vertx) {
         this.serverConnection = serverConnection;
         this.vertx = vertx;
-        this.clientId = RandomStringUtils.randomAlphanumeric(5);
+        this.clientId = new ClientId(RandomStringUtils.randomAlphanumeric(5));
     }
 
     @Override

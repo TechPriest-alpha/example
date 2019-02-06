@@ -1,8 +1,8 @@
 package io.example.server.api.tcp;
 
-import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.SpringVerticle;
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
+import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
 import io.example.server.data.NewClient;
 import io.vertx.core.Future;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 @SpringVerticle(instances = 100)
-public class TcpServer extends BaseVerticle {
+public class TcpServer extends BaseServerVerticle {
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
     private final Integer port;

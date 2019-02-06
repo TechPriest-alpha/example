@@ -9,16 +9,16 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
-public class AuthenticationRequest extends MessageFromServer {
-    private final MessageType messageType = MessageType.AUTHENTICATION_REQUEST;
+public class HelpResponse extends MessageFromServer {
+    private final MessageType messageType = MessageType.HELP_RESPONSE;
     private final String message;
 
-    public AuthenticationRequest() {
+    public HelpResponse() {
         this.message = message();
     }
 
     @Override
     protected String messageKey() {
-        return "authentication.request";
+        return "help.response";
     }
 }

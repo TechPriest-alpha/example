@@ -18,6 +18,11 @@
             <groupId>example.io</groupId>
             <artifactId>basic-chat-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>example.io</groupId>
+            <artifactId>common-test</artifactId>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <build>

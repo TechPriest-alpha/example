@@ -1,9 +1,9 @@
 package io.example.server.core;
 
-import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.message.chat.client.ChatCommand;
 import io.example.auxiliary.message.chat.client.ChatMessage;
+import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
 import io.example.server.data.AuthenticatedClient;
 import io.example.server.data.DisconnectedClient;
@@ -15,7 +15,7 @@ import io.vertx.core.buffer.Buffer;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AuthenticatedClientManager extends BaseVerticle {
+public class AuthenticatedClientManager extends BaseServerVerticle {
     private final AuthenticatedClient authenticatedClient;
     private int messageCount;
 
