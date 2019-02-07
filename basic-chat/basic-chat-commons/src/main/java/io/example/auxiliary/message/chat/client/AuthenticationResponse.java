@@ -1,5 +1,6 @@
 package io.example.auxiliary.message.chat.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.client.abstracts.ClientChatMessage;
@@ -15,4 +16,10 @@ import lombok.Value;
 public class AuthenticationResponse extends ClientChatMessage {
     private final MessageType messageType = MessageType.AUTHENTICATION_RESPONSE;
     private final ClientId clientId;
+
+    @Override
+    @JsonIgnore
+    public String getMessage() {
+        return "";
+    }
 }

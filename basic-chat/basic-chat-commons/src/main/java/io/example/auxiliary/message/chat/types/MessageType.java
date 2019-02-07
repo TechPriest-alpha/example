@@ -8,7 +8,8 @@ public enum MessageType {
     COMMAND,
     HELP_RESPONSE,
     UNKNOWN_COMMAND_RESPONSE,
-    NONE;
+    NONE,
+    ANY;
 
     public boolean isAuthenticationRequest() {
         return AUTHENTICATION_REQUEST == this;

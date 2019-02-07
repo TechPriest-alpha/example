@@ -1,5 +1,6 @@
 package io.example.auxiliary.message.chat.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.client.abstracts.ClientChatMessage;
@@ -20,4 +21,10 @@ public class ChatCommand extends ClientChatMessage {
     private final ClientId clientId;
     private final CommandType commandType;
     private final Instant messageTime = Instant.now();
+
+    @Override
+    @JsonIgnore
+    public String getMessage() {
+        return "";
+    }
 }

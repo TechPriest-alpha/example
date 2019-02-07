@@ -8,6 +8,7 @@ import io.example.auxiliary.message.chat.conversion.MessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
+import io.example.auxiliary.message.chat.server.HelpResponse;
 import io.vertx.core.Handler;
 import io.vertx.core.net.NetSocket;
 import lombok.Getter;
@@ -27,7 +28,8 @@ public class ServerConnection implements ConversionCommons {
         new SupportedMessage<>(ChatMessage.class),
         new SupportedMessage<>(AuthenticationRequest.class),
         new SupportedMessage<>(AuthenticationResultSuccess.class),
-        new SupportedMessage<>(AuthenticationResultFailure.class)
+        new SupportedMessage<>(AuthenticationResultFailure.class),
+        new SupportedMessage<>(HelpResponse.class)
     );
 
     private final NetSocket socket;

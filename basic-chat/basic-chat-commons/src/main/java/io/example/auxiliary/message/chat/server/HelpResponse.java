@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.example.auxiliary.message.chat.server.abstracts.MessageFromServer;
 import io.example.auxiliary.message.chat.types.MessageType;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 
 @Value
+@NonFinal
+@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class HelpResponse extends MessageFromServer {

@@ -8,7 +8,7 @@ import io.example.auxiliary.message.chat.client.ChatCommand;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.client.UnknownChatCommand;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
-import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
+import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.client.Routing;
 import io.example.client.api.server.handling.ServerConnection;
@@ -20,6 +20,7 @@ import io.vertx.core.buffer.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class UserDataHandler extends DataHandler {
@@ -83,6 +84,9 @@ public class UserDataHandler extends DataHandler {
             case UNKNOWN:
                 handleUnknownCommand(userInput);
                 break;
+            case NONE:
+                serverConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
+                break;
         }
     }
 
@@ -105,7 +109,7 @@ public class UserDataHandler extends DataHandler {
                 handleAuthenticationRequest((AuthenticationRequest) messageFromServer);
                 break;
             case AUTHENTICATION_RESULT:
-                handleAuthenticationResult((AuthenticationResultSuccess) messageFromServer);
+                handleAuthenticationResult((AuthenticationResult) messageFromServer);
                 break;
             case CHAT_TEXT:
                 handleNewChatMessage((ChatMessage) messageFromServer);
@@ -114,6 +118,11 @@ public class UserDataHandler extends DataHandler {
             case COMMAND:
                 log.error("Client does not support such message: {}", messageFromServer);
                 break;
+            case NONE:
+                log.error("Incomprehensible message from server: {}", messageFromServer);
+                break;
+            default:
+                outputMessage(messageFromServer.getMessage());
         }
     }
 
@@ -127,12 +136,14 @@ public class UserDataHandler extends DataHandler {
         log.info("Authentication request received");
     }
 
-    private void handleAuthenticationResult(final AuthenticationResultSuccess authenticationResult) {
+    private void handleAuthenticationResult(final AuthenticationResult authenticationResult) {
         outputMessage(authenticationResult.getMessage());
         if (authenticationResult.getVerdict().success()) {
             clientId.set(authenticationResult.getClientId());
             clientState.set(ClientState.ACTIVE);
-            authenticationResult.getLastMessages().forEach(msg -> System.console().writer().write(msg.getMessage()));
+            authenticationResult.getLastMessages().stream()
+                .sorted(Comparator.comparing(ChatMessage::getMessageTime))
+                .forEach(this::handleNewChatMessage);
             log.info("Authentication success");
         } else {
             log.info("Authentication failed");

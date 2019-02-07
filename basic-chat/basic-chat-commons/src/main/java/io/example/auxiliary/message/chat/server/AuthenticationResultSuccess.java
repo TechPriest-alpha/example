@@ -21,6 +21,11 @@ public class AuthenticationResultSuccess extends AuthenticationResult {
         super(clientId, AuthVerdict.SUCCESS, lastMessages);
     }
 
+    @ConstructorProperties({"message", "clientId", "verdict", "lastMessages"})
+    private AuthenticationResultSuccess(final String message, final ClientId clientId, final AuthVerdict verdict, final List<ChatMessage> lastMessages) {
+        super(message, clientId, verdict, lastMessages);
+    }
+
     @Override
     protected String messageKey() {
         return "authentication.result.success";
