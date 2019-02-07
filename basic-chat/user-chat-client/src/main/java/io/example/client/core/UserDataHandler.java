@@ -43,6 +43,12 @@ public class UserDataHandler extends DataHandler {
         super.start(startFuture);
     }
 
+    @Override
+    public void stop(final Future<Void> stopFuture) throws Exception {
+        serverConnection.close();
+        super.stop(stopFuture);
+    }
+
     @HandlerMethod
     public void handleUserInput(final UserInputMessage userInput) {
         switch (clientState.get()) {

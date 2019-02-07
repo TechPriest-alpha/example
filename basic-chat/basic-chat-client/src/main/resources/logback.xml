@@ -41,7 +41,7 @@
     <logger name="io.vertx.core.impl.DeploymentManager" level="OFF"/>
 
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

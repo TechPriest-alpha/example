@@ -25,7 +25,7 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
     @Override
     public void start(final Future<Void> startFuture) throws Exception {
         registerConsumer(Routing.CONNECTED_CLIENT_MANAGERS); //for chat message publishing
-        registerConsumer(Routing.CONNECTED_CLIENT_MANAGERS + "." + authenticatedClient.getClientId()); //for commands callback
+        registerConsumer(Routing.CONNECTED_CLIENT_MANAGERS + "." + authenticatedClient.getClientId().getValue()); //for commands callback
         authenticatedClient.chatHandler(new ChatHandler(this));
         authenticatedClient.disconnectHandler(onDisconnect -> {
             sendMessage(Routing.MESSAGE_STORAGE, new DisconnectedClient(authenticatedClient.getClientId()));
