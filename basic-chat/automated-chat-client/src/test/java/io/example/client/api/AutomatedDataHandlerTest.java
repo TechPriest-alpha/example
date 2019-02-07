@@ -9,6 +9,7 @@ import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.client.api.server.handling.ServerConnection;
 import io.example.client.core.AutomatedDataHandler;
+import io.example.test.BaseVertxTest;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
@@ -20,7 +21,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
-class AutomatedDataHandlerTest {
+class AutomatedDataHandlerTest extends BaseVertxTest {
     private AutomatedDataHandler automatedDataHandler;
     private ServerConnection socket;
     private Vertx vertx;
@@ -30,12 +31,14 @@ class AutomatedDataHandlerTest {
         Json.mapper.enableDefaultTyping();
         this.socket = Mockito.spy(new ServerConnection(Mockito.mock(NetSocket.class), new JsonMessageConverter()));
         this.vertx = Vertx.vertx();
-        this.automatedDataHandler = new AutomatedDataHandler(socket, Vertx.vertx());
+        this.automatedDataHandler = new AutomatedDataHandler(socket, true);
+        deploy(automatedDataHandler);
+        automatedDataHandler.init(vertx, vertx.getOrCreateContext());
     }
 
     @AfterEach
     void tearDown() {
-        vertx.close();
+        undeploy(automatedDataHandler.deploymentID());
     }
 
     @Test

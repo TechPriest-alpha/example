@@ -1,6 +1,5 @@
 package io.example.client.core;
 
-import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.HandlerMethod;
 import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.BaseChatMessage;
@@ -12,21 +11,19 @@ import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.client.Routing;
-import io.example.client.api.server.handling.ChatClientHandler;
 import io.example.client.api.server.handling.ServerConnection;
 import io.example.client.messages.OutputMessage;
 import io.example.client.messages.StopConsole;
 import io.example.client.messages.UserInputMessage;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class UserDataHandler extends BaseVerticle implements Handler<Buffer> {
-    private static final Logger log = LoggerFactory.getLogger(ChatClientHandler.class);
+public class UserDataHandler extends DataHandler {
+    private static final Logger log = LoggerFactory.getLogger(UserDataHandler.class);
     private final ServerConnection serverConnection;
     private final boolean allowUnknownCommands;
 

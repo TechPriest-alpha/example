@@ -6,8 +6,6 @@ import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
 import io.example.client.api.server.handling.ServerConnection;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import lombok.Value;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,15 +15,15 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Value
-public class AutomatedDataHandler implements Handler<Buffer> {
+public class AutomatedDataHandler extends DataHandler {
     private static final Logger log = LoggerFactory.getLogger(AutomatedDataHandler.class);
     private final ServerConnection serverConnection;
-    private final Vertx vertx;
+    private final boolean allowUnknownCommands;
     private final ClientId clientId;
 
-    public AutomatedDataHandler(final ServerConnection serverConnection, final Vertx vertx) {
+    public AutomatedDataHandler(final ServerConnection serverConnection, final boolean allowUnknownCommands) {
         this.serverConnection = serverConnection;
-        this.vertx = vertx;
+        this.allowUnknownCommands = allowUnknownCommands;
         this.clientId = new ClientId(RandomStringUtils.randomAlphanumeric(5));
     }
 

@@ -87,6 +87,7 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
             final var newChatMessage = new NewChatMessage(client.getClientId(), chatMessage);
             authenticatedClientManager.publishMessage(Routing.CONNECTED_CLIENT_MANAGERS, newChatMessage);
             authenticatedClientManager.sendMessageLocally(Routing.MESSAGE_STORAGE, newChatMessage);
+            log.debug("Chat message handled: {}", chatMessage);
             logBasicStats(chatMessage);
         }
 

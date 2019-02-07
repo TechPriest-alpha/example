@@ -47,6 +47,31 @@
             <artifactId>common-test</artifactId>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>example.io</groupId>
+            <artifactId>basic-chat-commons</artifactId>
+            <type>test-jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

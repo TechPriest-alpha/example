@@ -6,6 +6,8 @@ import io.example.auxiliary.message.chat.types.MessageType;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
+import java.beans.ConstructorProperties;
+
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
@@ -15,6 +17,11 @@ public class AuthenticationRequest extends MessageFromServer {
 
     public AuthenticationRequest() {
         this.message = message();
+    }
+
+    @ConstructorProperties({"message"})
+    private AuthenticationRequest(final String message) {
+        this.message = message;
     }
 
     @Override

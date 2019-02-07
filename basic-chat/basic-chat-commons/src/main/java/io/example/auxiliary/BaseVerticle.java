@@ -26,20 +26,24 @@ public abstract class BaseVerticle extends AbstractVerticle {
 
     protected <T extends BaseInternalMessage> void sendMessage(final String address, final T message) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions());
+        log.trace("Message {} sent to {}", message, address);
     }
 
     protected <T extends BaseInternalMessage> void sendMessage(
         final String address, final T message, final Handler<AsyncResult<Message<T>>> replyHandler
     ) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions(), replyHandler);
+        log.trace("Message {} sent to {} with reply", message, address);
     }
 
     protected <T extends BaseInternalMessage> void publishMessage(final String address, final T message) {
         vertx.eventBus().publish(address, message, new BaseDeliveryOptions());
+        log.trace("Message {} published to {}", message, address);
     }
 
     protected <T extends BaseInternalMessage> void sendMessageLocally(final String address, final T message) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions().setLocalOnly(true));
+        log.trace("Message {} sent locally to {}", message, address);
     }
 
 
@@ -47,6 +51,7 @@ public abstract class BaseVerticle extends AbstractVerticle {
         final String address, final T message, final Handler<AsyncResult<Message<T>>> replyHandler
     ) {
         vertx.eventBus().send(address, message, new BaseDeliveryOptions().setLocalOnly(true), replyHandler);
+        log.trace("Message {} sent locally with reply to {}", message, address);
     }
 
     protected <T extends BaseInternalMessage> void registerConsumer(final String address) {
