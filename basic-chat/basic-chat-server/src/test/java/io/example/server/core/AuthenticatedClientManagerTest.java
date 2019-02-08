@@ -6,7 +6,7 @@ import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.server.Routing;
-import io.example.server.data.AuthenticatedClient;
+import io.example.server.api.tcp.messages.AuthenticatedClient;
 import io.example.server.data.CommandResponse;
 import io.example.server.data.NewChatMessage;
 import io.example.server.data.NewCommandMessage;
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationWithTimeout;
 
+import static io.example.server.api.tcp.TcpServer.DELIMITER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
@@ -53,7 +54,7 @@ class AuthenticatedClientManagerTest extends BaseVertxTest {
         final var otherClient = nextClientId("OtherTestClient");
         final var chatMessage = new ChatMessage("test msg", otherClient);
         authenticatedClientManager.onNewChatMessage(new NewChatMessage(otherClient, chatMessage));
-        Mockito.verify(socket).write(messageConverter.encode(chatMessage));
+        Mockito.verify(socket).write(messageConverter.encode(chatMessage) + DELIMITER);
     }
 
     @Test
@@ -69,7 +70,7 @@ class AuthenticatedClientManagerTest extends BaseVertxTest {
     void commandResponseIsSentToClient() {
         final var chatMessage = new ChatMessage("cmd response", testClient);
         authenticatedClientManager.onCommandResponse(new CommandResponse(testClient, chatMessage));
-        Mockito.verify(socket).write(messageConverter.encode(chatMessage));
+        Mockito.verify(socket).write(messageConverter.encode(chatMessage) + DELIMITER);
     }
 
     @Test
@@ -91,7 +92,7 @@ class AuthenticatedClientManagerTest extends BaseVertxTest {
         addConsumer(Routing.CONNECTED_CLIENT_MANAGERS);
         addConsumer(Routing.MESSAGE_STORAGE);
 
-        handler.handle(Json.encodeToBuffer(chatMessage));
+        handler.handle(Json.encodeToBuffer(chatMessage).appendString(DELIMITER));
         assertEquals(awaitCompletion(), newChatMessage);
         assertEquals(awaitCompletion(), newChatMessage);
     }
@@ -117,7 +118,7 @@ class AuthenticatedClientManagerTest extends BaseVertxTest {
         final var newCommandMessage = new NewCommandMessage(testClient, command);
         addConsumer(Routing.COMMAND_HANDLER);
 
-        handler.handle(Json.encodeToBuffer(command));
+        handler.handle(Json.encodeToBuffer(command).appendString(DELIMITER));
 
         assertEquals(awaitCompletion(), newCommandMessage);
 

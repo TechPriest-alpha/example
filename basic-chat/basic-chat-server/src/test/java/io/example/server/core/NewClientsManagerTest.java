@@ -6,7 +6,7 @@ import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
-import io.example.server.data.NewClient;
+import io.example.server.api.tcp.messages.NewClient;
 import io.example.test.BaseVertxTest;
 import io.vertx.core.json.Json;
 import io.vertx.core.net.NetSocket;
@@ -18,6 +18,7 @@ import org.mockito.verification.VerificationWithTimeout;
 
 import java.util.ResourceBundle;
 
+import static io.example.server.api.tcp.TcpServer.DELIMITER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -53,7 +54,7 @@ class NewClientsManagerTest extends BaseVertxTest {
     void testAuthRequestSentForNewClient() {
         final var newClient = new NewClient(socket, messageConverter);
         newClientsManager.clientRequestsHandler(newClient);
-        Mockito.verify(socket, timeout).write(Json.encode(new AuthenticationRequest()));
+        Mockito.verify(socket, timeout).write(Json.encode(new AuthenticationRequest()) + DELIMITER);
     }
 
     @Test
@@ -62,8 +63,8 @@ class NewClientsManagerTest extends BaseVertxTest {
         dataStorage.addClient(client);
         final var newClient = new NewClient(socket, messageConverter);
         final var authenticator = new NewClientsManager.Authenticator(newClientsManager, newClient);
-        authenticator.handle(Json.encodeToBuffer(new AuthenticationResponse(client)));
-        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationResultFailure(client)));
+        authenticator.handle(Json.encodeToBuffer(new AuthenticationResponse(client)).appendString(DELIMITER));
+        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationResultFailure(client)) + DELIMITER);
     }
 
     @Test
@@ -73,8 +74,8 @@ class NewClientsManagerTest extends BaseVertxTest {
         dataStorage.addClient(client);
         final var newClient = new NewClient(socket, messageConverter);
         final var authenticator = new NewClientsManager.Authenticator(newClientsManager, newClient);
-        authenticator.handle(Json.encodeToBuffer(new AuthenticationResponse(otherClient)));
-        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationResultSuccess(otherClient, dataStorage.lastMessages())));
+        authenticator.handle(Json.encodeToBuffer(new AuthenticationResponse(otherClient)).appendString(DELIMITER));
+        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationResultSuccess(otherClient, dataStorage.lastMessages())) + DELIMITER);
     }
 
     @Test
@@ -83,7 +84,7 @@ class NewClientsManagerTest extends BaseVertxTest {
         dataStorage.addClient(client);
         final var newClient = new NewClient(socket, messageConverter);
         final var authenticator = new NewClientsManager.Authenticator(newClientsManager, newClient);
-        authenticator.handle(Json.encodeToBuffer(new ChatMessage("wrong message", client)));
-        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationRequest()));
+        authenticator.handle(Json.encodeToBuffer(new ChatMessage("wrong message", client)).appendString(DELIMITER));
+        Mockito.verify(socket, timeout).write(messageConverter.encode(new AuthenticationRequest()) + DELIMITER);
     }
 }

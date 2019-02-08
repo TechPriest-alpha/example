@@ -1,47 +1,53 @@
 package io.example.client.core;
 
+import io.example.auxiliary.helpers.ThreadUtils;
 import io.example.auxiliary.message.ClientId;
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 import io.vertx.core.buffer.Buffer;
-import lombok.Value;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Value
 public class AutomatedDataHandler extends DataHandler {
     private static final Logger log = LoggerFactory.getLogger(AutomatedDataHandler.class);
-    private final ServerConnection serverConnection;
+
+    private static final AtomicInteger cnt = new AtomicInteger(0);
+    private final TcpServerConnection tcpServerConnection;
     private final boolean allowUnknownCommands;
     private final ClientId clientId;
 
-    public AutomatedDataHandler(final ServerConnection serverConnection, final boolean allowUnknownCommands) {
-        this.serverConnection = serverConnection;
+    public AutomatedDataHandler(final TcpServerConnection tcpServerConnection, final boolean allowUnknownCommands) {
+        this.tcpServerConnection = tcpServerConnection;
         this.allowUnknownCommands = allowUnknownCommands;
-        this.clientId = new ClientId(RandomStringUtils.randomAlphanumeric(5));
+        this.clientId = new ClientId(cnt.incrementAndGet() + "_" + RandomStringUtils.randomAlphanumeric(5));
     }
 
     @Override
-    public void handle(final Buffer event) {
-        log.info("Client {} connected", clientId);
-
-        final BaseChatMessage messageFromServer = serverConnection.decode(event);
-        log.debug("Msg: {}", messageFromServer);
-        if (messageFromServer.getMessageType().isAuthenticationRequest()) {
-            handleAuthenticationRequest();
-        } else if (messageFromServer.getMessageType().isAuthenticationResult()) {
-            handleAuthenticationResult((AuthenticationResult) messageFromServer);
+    public void doHandle(final Buffer event) {
+        try {
+            final BaseChatMessage messageFromServer = tcpServerConnection.decode(event);
+            log.debug("Msg: {}", messageFromServer);
+            if (messageFromServer.getMessageType().isAuthenticationRequest()) {
+                handleAuthenticationRequest();
+            } else if (messageFromServer.getMessageType().isAuthenticationResult()) {
+                handleAuthenticationResult((AuthenticationResult) messageFromServer);
+            } else if (messageFromServer.getMessageType().isChatMessage()) {
+                log.debug("Client {} received message {} from client {}", clientId, messageFromServer.getMessage(), ((ChatMessage) messageFromServer).getClientId());
+            }
+        } catch (final Exception ex) {
+            log.error("Error on data: " + event, ex);
         }
+
     }
 
     private void handleAuthenticationRequest() {
-        serverConnection.sendMessage(new AuthenticationResponse(clientId));
+        tcpServerConnection.sendMessage(new AuthenticationResponse(clientId));
         log.debug("Authentication response: {}", clientId);
     }
 
@@ -50,13 +56,15 @@ public class AutomatedDataHandler extends DataHandler {
             final var counter = new AtomicInteger(0);
             vertx.setPeriodic(10, timer -> {
                 final var msg = new ChatMessage(RandomStringUtils.randomAlphabetic(10), clientId);
-                serverConnection.sendMessage(msg);
-//                ThreadUtils.awaitRandom(10, 100);
+                tcpServerConnection.sendMessage(msg);
+                ThreadUtils.awaitRandom(100, 200);
                 final var currentStep = counter.incrementAndGet();
                 log.debug("Next message sent: {}, {}", msg, currentStep);
-                if (currentStep >= 50) {
+                if (currentStep >= 1500) {
                     log.info("{} all messages sent", clientId);
                     vertx.cancelTimer(timer);
+                    tcpServerConnection.close();
+                    System.exit(0);
                 } else if (currentStep % 100 == 0) {
                     log.info("{} sent {} messages", clientId, currentStep);
                 }

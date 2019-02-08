@@ -3,7 +3,7 @@ package io.example.client.api.server;
 import io.example.auxiliary.BaseVerticle;
 import io.example.auxiliary.annotations.SpringVerticle;
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 import io.example.client.core.DataHandlerFactory;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @SpringVerticle(instances = 1)
 public class ChatTcpClient extends BaseVerticle {
+    public static final String DELIMITER = "\r\n";
 
     private final MessageConverter messageConverter;
     private final String serverHost;
@@ -47,9 +48,8 @@ public class ChatTcpClient extends BaseVerticle {
     private void onConnect(final AsyncResult<NetSocket> connectionEvent) {
         if (connectionEvent.succeeded()) {
             final var socket = connectionEvent.result();
-            final var dataHandler = dataHandlerFactory.create(new ServerConnection(socket, messageConverter), allowUnknownCommands);
-            vertx.deployVerticle(dataHandler);
-            socket.handler(dataHandler);
+            final var dataHandler = dataHandlerFactory.create(new TcpServerConnection(socket, messageConverter), allowUnknownCommands);
+            vertx.deployVerticle(dataHandler, onComplete -> socket.handler(dataHandler));
         } else {
             log.error("Error when connecting", connectionEvent.cause());
         }

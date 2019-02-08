@@ -7,9 +7,9 @@ import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
-import io.example.server.data.NewClient;
+import io.example.server.api.tcp.ServerSocketHandler;
+import io.example.server.contracts.NewClientContract;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class NewClientsManager extends BaseServerVerticle {
     }
 
     @HandlerMethod
-    public void clientRequestsHandler(final NewClient newClient) {
+    public void clientRequestsHandler(final NewClientContract newClient) {
         log.debug("Running authentication for new client");
         newClient.authenticationHandler(new Authenticator(this, newClient));
         newClient.sendAuthenticationRequest();
@@ -38,12 +38,12 @@ public class NewClientsManager extends BaseServerVerticle {
     }
 
     @RequiredArgsConstructor
-    public static class Authenticator implements Handler<Buffer> {
+    public static class Authenticator extends ServerSocketHandler {
         private final NewClientsManager newClientsManager;
-        private final NewClient authenticatingClient;
+        private final NewClientContract authenticatingClient;
 
         @Override
-        public void handle(final Buffer event) {
+        public void doHandle(final Buffer event) {
             final var clientResponse = authenticatingClient.decode(event);
             if (!clientResponse.getMessageType().isAuthenticationResponse()) {
                 authenticatingClient.sendAuthenticationRequest();
@@ -58,8 +58,10 @@ public class NewClientsManager extends BaseServerVerticle {
             } else {
                 newClientsManager.dataStorage.addClient(clientId);
                 final var lastMessages = newClientsManager.dataStorage.lastMessages();
-                authenticatingClient.sendToClient(new AuthenticationResultSuccess(clientId, lastMessages));
-                newClientsManager.vertx.deployVerticle(new AuthenticatedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)));
+                newClientsManager.vertx.deployVerticle(
+                    new AuthenticatedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)),
+                    onComplete -> authenticatingClient.sendToClient(new AuthenticationResultSuccess(clientId, lastMessages))
+                );
                 log.debug("Client response to auth request: {} registered as new client", authResponse);
             }
         }

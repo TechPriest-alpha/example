@@ -17,12 +17,14 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.example.client.api.server.ChatTcpClient.DELIMITER;
+
 /**
  * Class utilizes dirty trick to simplify decoding of JSON messages with varying types.
  * Known message types that would come from server are stored and incoming data is checked against known types by classname.
  */
 @RequiredArgsConstructor
-public class ServerConnection implements ConversionCommons {
+public class TcpServerConnection implements ConversionCommons {
     @Getter
     private final List<SupportedMessage> supportedMessageTypes = Arrays.asList(
         new SupportedMessage<>(ChatMessage.class),
@@ -37,7 +39,7 @@ public class ServerConnection implements ConversionCommons {
     private final MessageConverter messageConverter;
 
     public <T extends BaseChatMessage> void sendMessage(final T message) {
-        socket.write(messageConverter.encode(message));
+        socket.write(messageConverter.encode(message) + DELIMITER);
     }
 
     public void close() {

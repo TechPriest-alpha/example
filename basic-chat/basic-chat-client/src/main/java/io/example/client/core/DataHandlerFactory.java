@@ -1,8 +1,8 @@
 package io.example.client.core;
 
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 
 public interface DataHandlerFactory {
 
-    DataHandler create(final ServerConnection serverConnection, final boolean allowUnknownCommands);
+    DataHandler create(final TcpServerConnection tcpServerConnection, final boolean allowUnknownCommands);
 }

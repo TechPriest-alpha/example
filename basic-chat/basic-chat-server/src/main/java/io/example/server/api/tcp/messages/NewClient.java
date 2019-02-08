@@ -1,10 +1,11 @@
-package io.example.server.data;
+package io.example.server.api.tcp.messages;
 
 import io.example.auxiliary.message.SupportedMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
-import io.example.auxiliary.message.internal.BaseInternalMessage;
+import io.example.server.contracts.AuthenticatedClientContract;
+import io.example.server.contracts.NewClientContract;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Value
-public class NewClient implements ClientConnectionCommons, BaseInternalMessage {
+public class NewClient extends TcpClientConnection implements NewClientContract {
     @Getter
     private final List<SupportedMessage> supportedMessageTypes = Arrays.asList(
         new SupportedMessage<>(AuthenticationResponse.class)
@@ -31,11 +32,7 @@ public class NewClient implements ClientConnectionCommons, BaseInternalMessage {
         clientConnection.handler(authenticator);
     }
 
-    public void resume() {
-        clientConnection.resume();
-    }
-
-    public AuthenticatedClient toAuthenticatedClient(final AuthenticationResponse authenticationResponse) {
+    public AuthenticatedClientContract toAuthenticatedClient(final AuthenticationResponse authenticationResponse) {
         return new AuthenticatedClient(clientConnection, authenticationResponse.getClientId(), messageConverter);
     }
 }

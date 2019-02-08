@@ -22,4 +22,8 @@ public enum MessageType {
     public boolean isAuthenticationResponse() {
         return AUTHENTICATION_RESPONSE == this;
     }
+
+    public boolean isChatMessage() {
+        return CHAT_TEXT == this;
+    }
 }

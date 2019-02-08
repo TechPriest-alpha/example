@@ -4,7 +4,7 @@ import io.example.auxiliary.annotations.SpringVerticle;
 import io.example.auxiliary.message.chat.conversion.MessageConverter;
 import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
-import io.example.server.data.NewClient;
+import io.example.server.api.tcp.messages.NewClient;
 import io.vertx.core.Future;
 import io.vertx.core.net.NetServerOptions;
 import org.slf4j.Logger;
@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 @SpringVerticle(instances = 100)
 public class TcpServer extends BaseServerVerticle {
+    public static final String DELIMITER = "\r\n";
+
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
     private final Integer port;

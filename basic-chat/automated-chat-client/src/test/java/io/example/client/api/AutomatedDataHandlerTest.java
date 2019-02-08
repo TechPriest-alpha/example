@@ -7,7 +7,7 @@ import io.example.auxiliary.message.chat.conversion.JsonMessageConverter;
 import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 import io.example.client.core.AutomatedDataHandler;
 import io.example.test.BaseVertxTest;
 import io.vertx.core.Vertx;
@@ -21,15 +21,17 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
+import static io.example.client.api.server.ChatTcpClient.DELIMITER;
+
 class AutomatedDataHandlerTest extends BaseVertxTest {
     private AutomatedDataHandler automatedDataHandler;
-    private ServerConnection socket;
+    private TcpServerConnection socket;
     private Vertx vertx;
 
     @BeforeEach
     void setUp() {
         Json.mapper.enableDefaultTyping();
-        this.socket = Mockito.spy(new ServerConnection(Mockito.mock(NetSocket.class), new JsonMessageConverter()));
+        this.socket = Mockito.spy(new TcpServerConnection(Mockito.mock(NetSocket.class), new JsonMessageConverter()));
         this.vertx = Vertx.vertx();
         this.automatedDataHandler = new AutomatedDataHandler(socket, true);
         deploy(automatedDataHandler);
@@ -43,9 +45,9 @@ class AutomatedDataHandlerTest extends BaseVertxTest {
 
     @Test
     void clientSuccessAuth() {
-        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest()));
+        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest())).appendString(DELIMITER);
         final var clientId = new ClientId("successClientId");
-        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultSuccess(clientId, Collections.emptyList())));
+        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultSuccess(clientId, Collections.emptyList()))).appendString(DELIMITER);
         automatedDataHandler.handle(authenticationRequest);
         Mockito.verify(socket).sendMessage(Mockito.any(AuthenticationResponse.class));
         automatedDataHandler.handle(authenticationResult);
@@ -54,9 +56,9 @@ class AutomatedDataHandlerTest extends BaseVertxTest {
 
     @Test
     void clientFailedAuth() {
-        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest()));
+        final var authenticationRequest = Buffer.buffer(Json.encode(new AuthenticationRequest())).appendString(DELIMITER);
         final var clientId = new ClientId("failedClientId");
-        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultFailure(clientId)));
+        final var authenticationResult = Buffer.buffer(Json.encode(new AuthenticationResultFailure(clientId))).appendString(DELIMITER);
         automatedDataHandler.handle(authenticationRequest);
         Mockito.verify(socket).sendMessage(Mockito.any(AuthenticationResponse.class));
         automatedDataHandler.handle(authenticationResult);

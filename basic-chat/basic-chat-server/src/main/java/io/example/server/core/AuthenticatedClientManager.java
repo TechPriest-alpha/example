@@ -5,13 +5,13 @@ import io.example.auxiliary.message.chat.client.ChatCommand;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.server.BaseServerVerticle;
 import io.example.server.Routing;
-import io.example.server.data.AuthenticatedClient;
+import io.example.server.api.tcp.ServerSocketHandler;
+import io.example.server.contracts.AuthenticatedClientContract;
 import io.example.server.data.CommandResponse;
 import io.example.server.data.DisconnectedClient;
 import io.example.server.data.NewChatMessage;
 import io.example.server.data.NewCommandMessage;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor
 public class AuthenticatedClientManager extends BaseServerVerticle {
-    private final AuthenticatedClient authenticatedClient;
+    private final AuthenticatedClientContract authenticatedClient;
 
     @Override
     public void start(final Future<Void> startFuture) throws Exception {
@@ -52,10 +52,10 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
     }
 
     @Slf4j
-    public static final class ChatHandler implements Handler<Buffer> {
+    public static final class ChatHandler extends ServerSocketHandler {
         private final AtomicLong messageCount = new AtomicLong(0L);
         private final AuthenticatedClientManager authenticatedClientManager;
-        private final AuthenticatedClient client;
+        private final AuthenticatedClientContract client;
 
         ChatHandler(final AuthenticatedClientManager authenticatedClientManager) {
             this.authenticatedClientManager = authenticatedClientManager;
@@ -63,7 +63,7 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
         }
 
         @Override
-        public void handle(final Buffer event) {
+        public void doHandle(final Buffer event) {
             final var chatMessage = client.decode(event);
             switch (chatMessage.getMessageType()) {
                 case AUTHENTICATION_REQUEST:

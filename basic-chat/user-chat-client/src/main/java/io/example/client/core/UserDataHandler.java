@@ -11,7 +11,7 @@ import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.client.Routing;
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 import io.example.client.messages.OutputMessage;
 import io.example.client.messages.StopConsole;
 import io.example.client.messages.UserInputMessage;
@@ -25,16 +25,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class UserDataHandler extends DataHandler {
     private static final Logger log = LoggerFactory.getLogger(UserDataHandler.class);
-    private final ServerConnection serverConnection;
+    private final TcpServerConnection tcpServerConnection;
     private final boolean allowUnknownCommands;
 
     private final AtomicReference<ClientId> clientId = new AtomicReference<>();
     private final AtomicReference<ClientState> clientState = new AtomicReference<>(ClientState.CONNECTED);
 
-    public UserDataHandler(final ServerConnection serverConnection, final boolean allowUnknownCommands) {
-        this.serverConnection = serverConnection;
+    public UserDataHandler(final TcpServerConnection tcpServerConnection, final boolean allowUnknownCommands) {
+        this.tcpServerConnection = tcpServerConnection;
         this.allowUnknownCommands = allowUnknownCommands;
-        serverConnection.onClose(handler -> stopClient());
+        tcpServerConnection.onClose(handler -> stopClient());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UserDataHandler extends DataHandler {
 
     @Override
     public void stop(final Future<Void> stopFuture) throws Exception {
-        serverConnection.close();
+        tcpServerConnection.close();
         super.stop(stopFuture);
     }
 
@@ -54,7 +54,7 @@ public class UserDataHandler extends DataHandler {
         switch (clientState.get()) {
             case AUTHENTICATING:
                 final var clientId = new ClientId(userInput.getUserInput());
-                serverConnection.sendMessage(new AuthenticationResponse(clientId));
+                tcpServerConnection.sendMessage(new AuthenticationResponse(clientId));
                 break;
             case CONNECTED:
                 log.warn("Client authentication is not complete, user input discarded");
@@ -81,24 +81,24 @@ public class UserDataHandler extends DataHandler {
         switch (command) {
             case HELP:
             case STATS:
-                serverConnection.sendMessage(new ChatCommand(clientId.get(), command));
+                tcpServerConnection.sendMessage(new ChatCommand(clientId.get(), command));
                 break;
             case LEAVE:
                 clientState.set(ClientState.DISCONECTING);
-                serverConnection.close();
+                tcpServerConnection.close();
                 break;
             case UNKNOWN:
                 handleUnknownCommand(userInput);
                 break;
             case NONE:
-                serverConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
+                tcpServerConnection.sendMessage(new ChatMessage(userInput, clientId.get()));
                 break;
         }
     }
 
     private void handleUnknownCommand(final String userInput) {
         if (allowUnknownCommands) {
-            serverConnection.sendMessage(new UnknownChatCommand(userInput, clientId.get()));
+            tcpServerConnection.sendMessage(new UnknownChatCommand(userInput, clientId.get()));
             log.info("Unknown command sent to server: {}", userInput);
         } else {
             outputMessage("Command unknown: '" + userInput + "'");
@@ -107,8 +107,8 @@ public class UserDataHandler extends DataHandler {
     }
 
     @Override
-    public void handle(final Buffer event) {
-        final BaseChatMessage messageFromServer = serverConnection.decode(event);
+    public void doHandle(final Buffer event) {
+        final BaseChatMessage messageFromServer = tcpServerConnection.decode(event);
         log.debug("Msg: {}", messageFromServer);
         switch (messageFromServer.getMessageType()) {
             case AUTHENTICATION_REQUEST:

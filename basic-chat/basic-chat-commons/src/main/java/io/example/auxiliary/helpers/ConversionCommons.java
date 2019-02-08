@@ -19,13 +19,17 @@ public interface ConversionCommons {
         return getMessageConverter().decode(encoded, messageType);
     }
 
-    default <T extends BaseChatMessage> T decode(final Buffer data) {
-        //noinspection unchecked
-        return (T) getSupportedMessageTypes().stream()
-            .filter(supportedMessage -> data.toString().toLowerCase().startsWith(supportedMessage.getClassName()))
-            .findFirst()
-            .map(supportedMessage -> Json.decodeValue(data, supportedMessage.getCls()))
-            .orElseGet(() -> fallbackDecode(data));
+    default BaseChatMessage decode(final Buffer data) {
+        if (data.length() > 0) {
+            //noinspection unchecked
+            return getSupportedMessageTypes().stream()
+                .filter(supportedMessage -> data.toString().toLowerCase().startsWith(supportedMessage.getClassName()))
+                .findFirst()
+                .map(supportedMessage -> Json.decodeValue(data, supportedMessage.getCls()))
+                .orElseGet(() -> fallbackDecode(data));
+        } else {
+            return BaseChatMessage.NULL_MESSAGE;
+        }
     }
 
     default BaseChatMessage fallbackDecode(final Buffer data) {
@@ -33,11 +37,11 @@ public interface ConversionCommons {
             //strip class info
             return Json.decodeValue(data.toString().substring(data.toString().indexOf(":") + 1, data.length() - 1), AnyMessage.class);
         } catch (final Exception ex) {
-            return BaseChatMessage.NULL_MESSAGE;
+            throw ex;
         }
     }
 
-    List<SupportedMessage> getSupportedMessageTypes();
+    <T extends BaseChatMessage> List<SupportedMessage<T>> getSupportedMessageTypes();
 
     default <T extends BaseChatMessage> String encode(final T message) {
         return getMessageConverter().encode(message);

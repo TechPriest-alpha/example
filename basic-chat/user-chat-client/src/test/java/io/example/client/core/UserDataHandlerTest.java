@@ -12,7 +12,7 @@ import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.auxiliary.message.chat.server.HelpResponse;
 import io.example.client.Routing;
-import io.example.client.api.server.handling.ServerConnection;
+import io.example.client.api.server.handling.TcpServerConnection;
 import io.example.client.messages.OutputMessage;
 import io.example.client.messages.UserInputMessage;
 import io.example.test.BaseVertxTest;
@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static io.example.client.api.server.ChatTcpClient.DELIMITER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserDataHandlerTest extends BaseVertxTest {
@@ -38,7 +39,7 @@ class UserDataHandlerTest extends BaseVertxTest {
     void setUp() {
         messageConverter = new JsonMessageConverter();
         socket = Mockito.mock(NetSocket.class);
-        userDataHandler = new UserDataHandler(new ServerConnection(socket, messageConverter), true);
+        userDataHandler = new UserDataHandler(new TcpServerConnection(socket, messageConverter), true);
         deploy(userDataHandler);
     }
 
@@ -51,8 +52,8 @@ class UserDataHandlerTest extends BaseVertxTest {
     void authenticationRequestHandling() {
         startAuthentication("");
         final var authenticationRequest = new AuthenticationRequest();
-        userDataHandler.handle(Json.encodeToBuffer(authenticationRequest));
         addConsumer(Routing.CONSOLE_CLIENT);
+        userDataHandler.handle(Json.encodeToBuffer(authenticationRequest).appendString(DELIMITER));
         assertEquals(awaitCompletion(), new OutputMessage(authenticationRequest.getMessage()));
     }
 
@@ -66,7 +67,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         final var authenticationResultSuccess = new AuthenticationResultSuccess(
             clientId, Arrays.asList(chatMessage1, chatMessage2)
         );
-        userDataHandler.handle(Json.encodeToBuffer(authenticationResultSuccess));
+        userDataHandler.handle(Json.encodeToBuffer(authenticationResultSuccess).appendString(DELIMITER));
 
         assertEquals(awaitCompletion(), new OutputMessage(authenticationResultSuccess.getMessage()));
         assertEquals(awaitCompletion(), new OutputMessage(chatMessage1.getClientId() + ": " + chatMessage1.getMessage()));
@@ -78,7 +79,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         final ClientId clientId = startAuthentication("authFailure");
         awaitCompletion();
         final var authenticationResultFailure = new AuthenticationResultFailure(clientId);
-        userDataHandler.handle(Json.encodeToBuffer(authenticationResultFailure));
+        userDataHandler.handle(Json.encodeToBuffer(authenticationResultFailure).appendString(DELIMITER));
         assertEquals(awaitCompletion(), new OutputMessage(authenticationResultFailure.getMessage()));
     }
 
@@ -89,7 +90,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         awaitCompletion();
         authenticationSuccess(clientId);
         final var chatMessage = new ChatMessage("new chat msg", otherClient);
-        userDataHandler.handle(Json.encodeToBuffer(chatMessage));
+        userDataHandler.handle(Json.encodeToBuffer(chatMessage).appendString(DELIMITER));
         assertEquals(awaitCompletion(), new OutputMessage(chatMessage.getClientId() + ": " + chatMessage.getMessage()));
     }
 
@@ -99,7 +100,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         awaitCompletion();
         authenticationSuccess(clientId);
         final var helpMessage = new HelpResponse();
-        userDataHandler.handle(Json.encodeToBuffer(helpMessage));
+        userDataHandler.handle(Json.encodeToBuffer(helpMessage).appendString(DELIMITER));
         assertEquals(awaitCompletion(), new OutputMessage(helpMessage.getMessage()));
     }
 
@@ -109,7 +110,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         awaitCompletion();
         authenticationSuccess(clientId);
         final var helpMessage = new UnknownHelpResponse("anything");
-        userDataHandler.handle(Json.encodeToBuffer(helpMessage));
+        userDataHandler.handle(Json.encodeToBuffer(helpMessage).appendString(DELIMITER));
         assertEquals(awaitCompletion(), new OutputMessage("anything"));
     }
 
@@ -128,7 +129,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         final ClientId clientId = startAuthentication("authResponse");
         awaitCompletion();
         userDataHandler.handleUserInput(new UserInputMessage(clientId.getValue()));
-        Mockito.verify(socket).write(messageConverter.encode(new AuthenticationResponse(clientId)));
+        Mockito.verify(socket).write(messageConverter.encode(new AuthenticationResponse(clientId)) + DELIMITER);
     }
 
     @Test
@@ -138,7 +139,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         authenticationSuccess(clientId);
         userDataHandler.handleUserInput(new UserInputMessage("new chat message"));
         final var encoded = messageConverter.encode(new ChatMessage("new chat message", clientId));
-        Mockito.verify(socket).write(Mockito.startsWith(encoded.substring(0, encoded.indexOf("messageTime"))));
+        Mockito.verify(socket).write(Mockito.startsWith(encoded.substring(0, encoded.indexOf("messageTime"))) + DELIMITER);
     }
 
     @Test
@@ -148,11 +149,11 @@ class UserDataHandlerTest extends BaseVertxTest {
         authenticationSuccess(clientId);
         userDataHandler.handleUserInput(new UserInputMessage("!command"));
         final var encoded = messageConverter.encode(new UnknownChatCommand("!command", clientId));
-        Mockito.verify(socket).write(Mockito.startsWith(encoded.substring(0, encoded.indexOf("messageTime"))));
+        Mockito.verify(socket).write(Mockito.startsWith(encoded.substring(0, encoded.indexOf("messageTime"))) + DELIMITER);
     }
 
     private void authenticationSuccess(final ClientId clientId) {
-        userDataHandler.handle(Json.encodeToBuffer(new AuthenticationResultSuccess(clientId, Collections.emptyList())));
+        userDataHandler.handle(Json.encodeToBuffer(new AuthenticationResultSuccess(clientId, Collections.emptyList())).appendString(DELIMITER));
         awaitCompletion();
 
     }
@@ -160,7 +161,7 @@ class UserDataHandlerTest extends BaseVertxTest {
     private ClientId startAuthentication(final String client) {
         final var authenticationRequest = new AuthenticationRequest();
         final var clientId = nextClientId(client);
-        userDataHandler.handle(Json.encodeToBuffer(authenticationRequest));
+        userDataHandler.handle(Json.encodeToBuffer(authenticationRequest).appendString(DELIMITER));
         addConsumer(Routing.CONSOLE_CLIENT);
         return clientId;
     }
