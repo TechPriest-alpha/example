@@ -51,10 +51,14 @@ public abstract class ChatTcpClient extends BaseVerticle {
     private void onConnect(final AsyncResult<NetSocket> connectionEvent) {
         if (connectionEvent.succeeded()) {
             final var socket = connectionEvent.result();
+            socket.pause();
             final RecordParser recordParser = RecordParser.newDelimited(DELIMITER);
             final var dataHandler = dataHandlerFactory.create(new TcpServerConnection(socket, messageConverter), allowUnknownCommands);
             recordParser.handler(dataHandler);
-            vertx.deployVerticle(dataHandler, onComplete -> socket.handler(recordParser));
+            vertx.deployVerticle(dataHandler, onComplete -> {
+                socket.handler(recordParser);
+                socket.resume();
+            });
         } else {
             log.error("Error when connecting", connectionEvent.cause());
         }

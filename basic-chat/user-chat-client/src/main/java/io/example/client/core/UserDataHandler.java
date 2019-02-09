@@ -132,7 +132,7 @@ public class UserDataHandler extends DataHandler {
     }
 
     private void handleNewChatMessage(final ChatMessage messageFromServer) {
-        outputMessage(messageFromServer.getClientId() + ": " + messageFromServer.getMessage());
+        outputMessage(messageFromServer.getClientId().getValue() + ": " + messageFromServer.getMessage());
     }
 
     private void handleAuthenticationRequest(final AuthenticationRequest messageFromServer) {
