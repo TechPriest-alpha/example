@@ -6,7 +6,7 @@ import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.AuthenticationResponse;
 import io.example.auxiliary.message.chat.client.ChatMessage;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
-import io.example.client.api.server.handling.TcpServerConnection;
+import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -18,18 +18,25 @@ public class AutomatedDataHandler extends DataHandler {
     private static final Logger log = LoggerFactory.getLogger(AutomatedDataHandler.class);
 
     private static final AtomicInteger cnt = new AtomicInteger(0);
-    private final TcpServerConnection tcpServerConnection;
+    private final ServerConnectionContract tcpServerConnection;
     private final boolean allowUnknownCommands;
     private final ClientId clientId;
 
-    public AutomatedDataHandler(final TcpServerConnection tcpServerConnection, final boolean allowUnknownCommands) {
+    public AutomatedDataHandler(final ServerConnectionContract tcpServerConnection, final boolean allowUnknownCommands) {
         this.tcpServerConnection = tcpServerConnection;
         this.allowUnknownCommands = allowUnknownCommands;
         this.clientId = new ClientId(cnt.incrementAndGet() + "_" + RandomStringUtils.randomAlphanumeric(5));
+        tcpServerConnection.onClose(closeEvent -> log.info("Client {} closed connection", clientId));
     }
 
     @Override
-    public void doHandle(final Buffer event) {
+    public void stop(final Future<Void> stopFuture) throws Exception {
+        tcpServerConnection.close();
+        super.stop(stopFuture);
+    }
+
+    @Override
+    public void handle(final Buffer event) {
         try {
             final BaseChatMessage messageFromServer = tcpServerConnection.decode(event);
             log.debug("Msg: {}", messageFromServer);
@@ -64,8 +71,7 @@ public class AutomatedDataHandler extends DataHandler {
                     log.info("{} all messages sent", clientId);
                     vertx.cancelTimer(timer);
                     tcpServerConnection.close();
-                    System.exit(0);
-                } else if (currentStep % 100 == 0) {
+                } else if (currentStep % 50 == 0) {
                     log.info("{} sent {} messages", clientId, currentStep);
                 }
             });

@@ -11,7 +11,6 @@ import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.abstracts.AuthenticationResult;
 import io.example.auxiliary.message.chat.types.CommandType;
 import io.example.client.Routing;
-import io.example.client.api.server.handling.TcpServerConnection;
 import io.example.client.messages.OutputMessage;
 import io.example.client.messages.StopConsole;
 import io.example.client.messages.UserInputMessage;
@@ -25,13 +24,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class UserDataHandler extends DataHandler {
     private static final Logger log = LoggerFactory.getLogger(UserDataHandler.class);
-    private final TcpServerConnection tcpServerConnection;
+    private final ServerConnectionContract tcpServerConnection;
     private final boolean allowUnknownCommands;
 
     private final AtomicReference<ClientId> clientId = new AtomicReference<>();
     private final AtomicReference<ClientState> clientState = new AtomicReference<>(ClientState.CONNECTED);
 
-    public UserDataHandler(final TcpServerConnection tcpServerConnection, final boolean allowUnknownCommands) {
+    public UserDataHandler(final ServerConnectionContract tcpServerConnection, final boolean allowUnknownCommands) {
         this.tcpServerConnection = tcpServerConnection;
         this.allowUnknownCommands = allowUnknownCommands;
         tcpServerConnection.onClose(handler -> stopClient());
@@ -107,7 +106,7 @@ public class UserDataHandler extends DataHandler {
     }
 
     @Override
-    public void doHandle(final Buffer event) {
+    public void handle(final Buffer event) {
         final BaseChatMessage messageFromServer = tcpServerConnection.decode(event);
         log.debug("Msg: {}", messageFromServer);
         switch (messageFromServer.getMessageType()) {

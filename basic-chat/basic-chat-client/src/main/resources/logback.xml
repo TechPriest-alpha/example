@@ -2,7 +2,7 @@
 
     <property name="_INTERNAL_LOG_PATH" value="${LOG_PATH:-./logs}"/>
 
-    <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-basic-chat-client}"/>
+    <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-automated-chat-client}"/>
 
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">

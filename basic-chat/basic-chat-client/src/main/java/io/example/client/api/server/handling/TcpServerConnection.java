@@ -1,6 +1,5 @@
 package io.example.client.api.server.handling;
 
-import io.example.auxiliary.helpers.ConversionCommons;
 import io.example.auxiliary.message.SupportedMessage;
 import io.example.auxiliary.message.chat.BaseChatMessage;
 import io.example.auxiliary.message.chat.client.ChatMessage;
@@ -9,6 +8,7 @@ import io.example.auxiliary.message.chat.server.AuthenticationRequest;
 import io.example.auxiliary.message.chat.server.AuthenticationResultFailure;
 import io.example.auxiliary.message.chat.server.AuthenticationResultSuccess;
 import io.example.auxiliary.message.chat.server.HelpResponse;
+import io.example.client.core.ServerConnectionContract;
 import io.vertx.core.Handler;
 import io.vertx.core.net.NetSocket;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import static io.example.client.api.server.ChatTcpClient.DELIMITER;
  * Known message types that would come from server are stored and incoming data is checked against known types by classname.
  */
 @RequiredArgsConstructor
-public class TcpServerConnection implements ConversionCommons {
+public class TcpServerConnection implements ServerConnectionContract {
     @Getter
     private final List<SupportedMessage> supportedMessageTypes = Arrays.asList(
         new SupportedMessage<>(ChatMessage.class),
