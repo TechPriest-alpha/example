@@ -70,8 +70,8 @@ class UserDataHandlerTest extends BaseVertxTest {
         userDataHandler.handle(Json.encodeToBuffer(authenticationResultSuccess).appendString(DELIMITER));
 
         assertEquals(awaitCompletion(), new OutputMessage(authenticationResultSuccess.getMessage()));
-        assertEquals(awaitCompletion(), new OutputMessage(chatMessage1.getClientId() + ": " + chatMessage1.getMessage()));
-        assertEquals(awaitCompletion(), new OutputMessage(chatMessage2.getClientId() + ": " + chatMessage2.getMessage()));
+        assertEquals(awaitCompletion(), new OutputMessage(chatMessage1.getClientId().getValue() + ": " + chatMessage1.getMessage()));
+        assertEquals(awaitCompletion(), new OutputMessage(chatMessage2.getClientId().getValue() + ": " + chatMessage2.getMessage()));
     }
 
     @Test
@@ -91,7 +91,7 @@ class UserDataHandlerTest extends BaseVertxTest {
         authenticationSuccess(clientId);
         final var chatMessage = new ChatMessage("new chat msg", otherClient);
         userDataHandler.handle(Json.encodeToBuffer(chatMessage).appendString(DELIMITER));
-        assertEquals(awaitCompletion(), new OutputMessage(chatMessage.getClientId() + ": " + chatMessage.getMessage()));
+        assertEquals(awaitCompletion(), new OutputMessage(chatMessage.getClientId().getValue() + ": " + chatMessage.getMessage()));
     }
 
     @Test

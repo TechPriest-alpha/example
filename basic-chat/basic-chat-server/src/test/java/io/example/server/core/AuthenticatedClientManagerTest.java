@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.verification.VerificationWithTimeout;
 
 import static io.example.server.api.tcp.TcpServer.DELIMITER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +29,6 @@ class AuthenticatedClientManagerTest extends BaseVertxTest {
     private ClientId testClient;
     private AuthenticatedClientManager authenticatedClientManager;
     private NetSocket socket;
-    private final VerificationWithTimeout timeout = Mockito.timeout(1000);
 
     @BeforeEach
     void setUp() {

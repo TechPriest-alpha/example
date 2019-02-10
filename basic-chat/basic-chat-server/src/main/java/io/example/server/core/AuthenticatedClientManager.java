@@ -97,6 +97,7 @@ public class AuthenticatedClientManager extends BaseServerVerticle {
                 return;
             }
             authenticatedClientManager.sendMessage(Routing.COMMAND_HANDLER, new NewCommandMessage(client.getClientId(), chatCommand));
+            authenticatedClientManager.sendMessageLocally(Routing.MESSAGE_STORAGE, new NewChatMessage(client.getClientId(), chatCommand));
         }
 
         private void logBasicStats(final ChatMessage chatMessage) {
