@@ -52,11 +52,10 @@ public class NewClientsManager extends BaseServerVerticle {
             }
             final var authResponse = (AuthenticationResponse) clientResponse;
             final var clientId = authResponse.getClientId();
-            if (newClientsManager.dataStorage.containsClient(clientId)) {
+            if (!newClientsManager.dataStorage.addClient(clientId)) {
                 authenticatingClient.sendToClient(new AuthenticationResultFailure(clientId));
                 log.info("Client response to auth request: {} is already in use", authResponse);
             } else {
-                newClientsManager.dataStorage.addClient(clientId);
                 final var lastMessages = newClientsManager.dataStorage.lastMessages();
                 newClientsManager.vertx.deployVerticle(
                     new AuthenticatedClientManager(authenticatingClient.toAuthenticatedClient(authResponse)),

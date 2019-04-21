@@ -67,8 +67,8 @@ public class DataStorage extends BaseVerticle {
         return REGISTERED_CLIENTS.contains(clientId);
     }
 
-    public void addClient(final ClientId clientId) {
-        REGISTERED_CLIENTS.add(clientId);
+    public boolean addClient(final ClientId clientId) {
+        return REGISTERED_CLIENTS.add(clientId);
     }
 
     public List<ChatMessage> lastMessages() {
