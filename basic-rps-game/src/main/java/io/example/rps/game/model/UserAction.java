@@ -1,5 +1,5 @@
 package io.example.rps.game.model;
 
 public enum UserAction {
-    STATS, EXIT, PLAY, LEARN
+    STATS, EXIT, PLAY, LEARN, CHOOSE_STRATEGY
 }

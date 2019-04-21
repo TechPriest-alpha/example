@@ -1,12 +1,12 @@
 package io.example.rps.game.model;
 
 import io.example.rps.game.strategies.GameStrategy;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import java.util.EnumMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Value
 public class GamingSession {
@@ -14,9 +14,17 @@ public class GamingSession {
     @Setter
     @NonFinal
     private GameStrategy strategy;
-    private final AtomicBoolean isActive = new AtomicBoolean(true);
-    private final AtomicBoolean tutorialMode = new AtomicBoolean(false);
+    @NonFinal
+    @Getter
+    private boolean active = true;
+    @NonFinal
+    @Getter
+    private boolean tutorialMode = false;
 
+    public GamingSession(final User user, final GameStrategy strategy) {
+        this.user = user;
+        this.strategy = strategy;
+    }
 
     private final EnumMap<ValidMove, Integer> userMoves = new EnumMap<>(ValidMove.class);
     private final EnumMap<ValidMove, Integer> botMoves = new EnumMap<>(ValidMove.class);
@@ -41,24 +49,15 @@ public class GamingSession {
     }
 
     public void closeSession() {
-        isActive.set(false);
+        active = false;
     }
 
-    public void activateTutorialMode(final GameStrategy tutorialStrategy) {
-        tutorialMode.set(true);
-        strategy = tutorialStrategy;
+    public void activateTutorialMode() {
+        tutorialMode = true;
     }
 
-    public void deactivateTutorialMode(final GameStrategy gameStrategy) {
-        tutorialMode.set(false);
-        strategy = gameStrategy;
+    public void deactivateTutorialMode() {
+        tutorialMode = false;
     }
 
-    public boolean isActive() {
-        return isActive.get();
-    }
-
-    public boolean isTutorial() {
-        return tutorialMode.get();
-    }
 }

@@ -6,7 +6,7 @@ import lombok.val;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BasicRandomStrategy implements GameStrategy {
+public class BasicRandomStrategy extends GameStrategy {
     private final Random RANDOM = ThreadLocalRandom.current();
     private final int AVAILABLE_MOVE_LENGTH = ValidMove.values().length;
 
@@ -18,5 +18,10 @@ public class BasicRandomStrategy implements GameStrategy {
     @Override
     public String name() {
         return "Basic Random Bot";
+    }
+
+    @Override
+    public GameStrategy get() {
+        return new BasicRandomStrategy();
     }
 }

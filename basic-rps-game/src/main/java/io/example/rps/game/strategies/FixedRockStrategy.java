@@ -1,17 +1,16 @@
 package io.example.rps.game.strategies;
 
-import io.example.rps.game.model.RoundResult;
 import io.example.rps.game.model.ValidMove;
 
-public class CheatingStrategy extends GameStrategy {
-
+public class FixedRockStrategy extends GameStrategy {
+    @Override
     public ValidMove nextMove(final ValidMove userMove) {
-        return RoundResult.getWinningMoveFor(userMove);
+        return ValidMove.ROCK;
     }
 
     @Override
     public String name() {
-        return "Cheating Bot";
+        return "Single-move (ROCK) bot";
     }
 
     @Override

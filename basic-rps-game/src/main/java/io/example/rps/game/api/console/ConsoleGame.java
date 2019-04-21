@@ -3,7 +3,7 @@ package io.example.rps.game.api.console;
 import io.example.rps.game.model.GamingSession;
 import io.example.rps.game.model.User;
 import io.example.rps.game.model.UserAction;
-import io.example.rps.game.strategies.BasicRandomStrategy;
+import io.example.rps.game.strategies.StrategiesRegistry;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
@@ -18,8 +18,8 @@ public class ConsoleGame {
         textIO = TextIoFactory.getTextIO();
         terminal = textIO.getTextTerminal();
         final var user = introduceUser();
-        gamingSession = new GamingSession(user, new BasicRandomStrategy());
-        actionRenderer = new ConsoleUserActionRender(gamingSession);
+        gamingSession = new GamingSession(user, StrategiesRegistry.getDefault());
+        actionRenderer = new ConsoleUserActionRender(gamingSession, textIO);
     }
 
     public void doPlay() {
@@ -27,7 +27,7 @@ public class ConsoleGame {
             final var nextUserAction
                 = textIO.newEnumInputReader(UserAction.class)
                 .withNumberedPossibleValues(UserAction.values())
-                .read("What do you want to do?");
+                .read("\nWhat do you want to do?");
             actionRenderer.handleUserAction(nextUserAction);
         } while (gamingSession.isActive());
     }

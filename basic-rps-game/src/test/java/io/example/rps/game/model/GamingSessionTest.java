@@ -1,6 +1,6 @@
 package io.example.rps.game.model;
 
-import io.example.rps.game.strategies.BasicRandomStrategy;
+import io.example.rps.game.strategies.FixedRockStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ class GamingSessionTest {
 
     @BeforeEach
     void setUp() {
-        this.gamingSession = new GamingSession(new User(""), new BasicRandomStrategy());
+        this.gamingSession = new GamingSession(new User(""), new FixedRockStrategy());
     }
 
     @Test
