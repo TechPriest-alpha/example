@@ -1,5 +1,7 @@
 package io.example.rps.game.model;
 
+import io.example.rps.game.errors.GeneralInternalError;
+
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -24,7 +26,19 @@ public enum RoundResult {
         }
     }
 
+    public static ValidMove getWinningMoveFor(final ValidMove validMove) {
+        return WINNING_MOVES.entrySet().stream()
+            .filter(e -> e.getValue().contains(validMove))
+            .map(Map.Entry::getKey)
+            .findFirst()
+            .orElseThrow(() -> new GeneralInternalError("No winning move for " + validMove.name()));
+    }
+
     public boolean isDraw() {
         return DRAW == this;
+    }
+
+    public boolean isWin() {
+        return WIN == this;
     }
 }

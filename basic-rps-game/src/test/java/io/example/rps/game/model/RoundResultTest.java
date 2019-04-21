@@ -52,6 +52,13 @@ class RoundResultTest {
         assertEquals(RoundResult.deriveRoundResult(validMove, validMove), RoundResult.DRAW);
     }
 
+    @ParameterizedTest
+    @MethodSource("validMoves")
+    @DisplayName("Every move has its winning counterpart")
+    void winningMoveAlwaysFound(final ValidMove validMove) {
+        assertEquals(RoundResult.deriveRoundResult(RoundResult.getWinningMoveFor(validMove), validMove), RoundResult.WIN);
+    }
+
     private static ValidMove[] validMoves() {
         return ValidMove.values();
     }
