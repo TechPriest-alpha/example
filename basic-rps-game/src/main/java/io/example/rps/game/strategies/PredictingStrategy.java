@@ -1,26 +1,28 @@
 package io.example.rps.game.strategies;
 
 import io.example.rps.game.model.ValidMove;
-import lombok.val;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BasicRandomStrategy extends GameStrategy {
+
+public class PredictingStrategy extends GameStrategy {
     private final Random RANDOM = ThreadLocalRandom.current();
+    private final Map<ValidMove, Long> stats = new EnumMap<>(ValidMove.class);
 
     public ValidMove nextMove(final ValidMove userMove) {
-        final val nextMove = RANDOM.nextInt(AVAILABLE_MOVE_LENGTH);
-        return ValidMove.values()[nextMove];
+        return null;
     }
 
     @Override
     public String name() {
-        return "Basic Random Bot";
+        return "Predicting Bot";
     }
 
     @Override
     public GameStrategy get() {
-        return new BasicRandomStrategy();
+        return new PredictingStrategy();
     }
 }

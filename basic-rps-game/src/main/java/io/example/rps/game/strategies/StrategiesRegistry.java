@@ -15,6 +15,8 @@ public class StrategiesRegistry {
         register(new CheatingStrategy());
         register(new BasicRandomStrategy());
         register(new FixedRockStrategy());
+        register(new ScienceStrategy());
+        register(new StatsStrategy());
     }
 
     private static void register(final GameStrategy gameStrategy) {

@@ -60,22 +60,23 @@ class ConsoleUserActionRender implements UserActionHandler {
             .withNumberedPossibleValues(ValidMove.values())
             .read("Your move:");
         final var botMove = userSession.nextMove(userMove);
-        processRoundResult(userMove, botMove);
+        final var roundResult = processRoundResult(userMove, botMove);
+        userSession.getStrategy().adjustByResult(roundResult);
     }
 
     private void stats() {
         terminal.printf("Stats: %s\n", userSession.getStats());
     }
 
-    private void processRoundResult(final ValidMove userMove, final ValidMove botMove) {
+    private RoundResult processRoundResult(final ValidMove userMove, final ValidMove botMove) {
         if (userSession.isTutorialMode()) {
-            processTutorial(userMove, botMove);
+            return processTutorial(userMove, botMove);
         } else {
-            processNormalGame(userMove, botMove);
+            return processNormalGame(userMove, botMove);
         }
     }
 
-    private void processTutorial(final ValidMove userMove, final ValidMove botMove) {
+    private RoundResult processTutorial(final ValidMove userMove, final ValidMove botMove) {
         final var roundResult = RoundResult.deriveRoundResult(userMove, botMove);
         if (roundResult.isWin()) {
             terminal.printf("You're doing great! Bot move was %s, and you won with move %s\n", botMove, userMove);
@@ -85,9 +86,10 @@ class ConsoleUserActionRender implements UserActionHandler {
                 botMove, RoundResult.getWinningMoveFor(botMove)
             );
         }
+        return roundResult;
     }
 
-    private void processNormalGame(final ValidMove userMove, final ValidMove botMove) {
+    private RoundResult processNormalGame(final ValidMove userMove, final ValidMove botMove) {
         final var roundResult = RoundResult.deriveRoundResult(userMove, botMove);
         userSession.update(userMove, botMove, roundResult);
         terminal.printf("Bot move: %s\n", botMove);
@@ -96,6 +98,7 @@ class ConsoleUserActionRender implements UserActionHandler {
         } else {
             terminal.printf("You %s\n", roundResult);
         }
+        return roundResult;
     }
 
     @FunctionalInterface
