@@ -1,6 +1,6 @@
 package io.example.rps.game.model;
 
-import io.example.rps.game.strategies.FixedRockStrategy;
+import io.example.rps.game.strategies.basic.FixedRockStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -5,14 +5,14 @@ import io.example.rps.game.model.ValidMove;
 
 import java.util.function.Supplier;
 
-public abstract class GameStrategy implements Supplier<GameStrategy> {
-    static final int AVAILABLE_MOVE_LENGTH = ValidMove.values().length;
+public interface GameStrategy extends Supplier<GameStrategy> {
+    int AVAILABLE_MOVE_LENGTH = ValidMove.values().length;
 
-    public abstract ValidMove nextMove(final ValidMove userMove);
+    ValidMove nextMove(final ValidMove userMove);
 
-    public abstract String name();
+    String name();
 
-    public void adjustByResult(final RoundResult roundResult) {
+    default void adjustByResult(final RoundResult roundResult) {
         //noop
     }
 }

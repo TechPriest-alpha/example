@@ -1,12 +1,13 @@
-package io.example.rps.game.strategies;
+package io.example.rps.game.strategies.basic;
 
 import io.example.rps.game.model.ValidMove;
+import io.example.rps.game.strategies.GameStrategy;
 import lombok.val;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BasicRandomStrategy extends GameStrategy {
+public class BasicRandomStrategy implements GameStrategy {
     private final Random RANDOM = ThreadLocalRandom.current();
 
     public ValidMove nextMove(final ValidMove userMove) {

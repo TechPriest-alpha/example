@@ -5,8 +5,8 @@ import io.example.rps.game.model.RoundResult;
 import io.example.rps.game.model.User;
 import io.example.rps.game.model.UserAction;
 import io.example.rps.game.model.ValidMove;
-import io.example.rps.game.strategies.CheatingStrategy;
-import io.example.rps.game.strategies.FixedRockStrategy;
+import io.example.rps.game.strategies.basic.CheatingStrategy;
+import io.example.rps.game.strategies.basic.FixedRockStrategy;
 import org.beryx.textio.EnumInputReader;
 import org.beryx.textio.StringInputReader;
 import org.beryx.textio.TextIO;
@@ -36,6 +36,7 @@ class ConsoleUserActionRenderTest {
     @BeforeEach
     void setUp() {
         initMocks(this);
+        //noinspection unchecked
         Mockito.when(textIO.getTextTerminal()).thenReturn(terminal);
         Mockito.when(textIO.newStringInputReader()).thenReturn(stringReader);
         Mockito.when(textIO.newEnumInputReader(ValidMove.class)).thenReturn(enumReader);

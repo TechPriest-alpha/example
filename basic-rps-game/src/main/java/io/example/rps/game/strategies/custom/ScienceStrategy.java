@@ -1,7 +1,8 @@
-package io.example.rps.game.strategies;
+package io.example.rps.game.strategies.custom;
 
 import io.example.rps.game.model.RoundResult;
 import io.example.rps.game.model.ValidMove;
+import io.example.rps.game.strategies.GameStrategy;
 import lombok.val;
 
 import java.util.Random;
@@ -17,12 +18,11 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @see <a href="https://arstechnica.com/science/2014/05/win-at-rock-paper-scissors-by-knowing-thy-opponent/">aricle</a>
  */
-public class ScienceStrategy extends GameStrategy {
+public class ScienceStrategy implements GameStrategy {
     private final Random RANDOM = ThreadLocalRandom.current();
     private ValidMove lastUserMove = null;
     private ValidMove lastBotMove = null;
     private ValidMove nextBotMove = null;
-
 
     public ValidMove nextMove(final ValidMove userMove) {
         lastUserMove = userMove;

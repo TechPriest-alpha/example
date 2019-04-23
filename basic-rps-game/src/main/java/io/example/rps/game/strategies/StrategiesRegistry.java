@@ -1,5 +1,11 @@
 package io.example.rps.game.strategies;
 
+import io.example.rps.game.strategies.basic.BasicRandomStrategy;
+import io.example.rps.game.strategies.basic.CheatingStrategy;
+import io.example.rps.game.strategies.basic.FixedRockStrategy;
+import io.example.rps.game.strategies.custom.ScienceStrategy;
+import io.example.rps.game.strategies.stats.PredictingStrategy;
+import io.example.rps.game.strategies.stats.StatsStrategy;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -17,6 +23,7 @@ public class StrategiesRegistry {
         register(new FixedRockStrategy());
         register(new ScienceStrategy());
         register(new StatsStrategy());
+        register(new PredictingStrategy());
     }
 
     private static void register(final GameStrategy gameStrategy) {
