@@ -1,4 +1,4 @@
-package org.vdenisov.wicket;
+package example.io.wicket;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.core.util.file.WebApplicationPath;

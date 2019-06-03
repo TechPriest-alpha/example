@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.vdenisov</groupId>
-    <artifactId>mini-samples</artifactId>
+    <groupId>example.io</groupId>
+    <artifactId>wicket-samples</artifactId>
     <version>1.0-SNAPSHOT</version>
     <prerequisites>
         <maven>3.6.0</maven>
@@ -249,7 +249,7 @@
             <!--                    <finalName>embedded-undertow-${project.version}</finalName>-->
             <!--                    <archive>-->
             <!--                        <manifest>-->
-            <!--                            <mainClass>org.vdenisov.Main</mainClass>-->
+            <!--                            <mainClass>Main</mainClass>-->
             <!--                        </manifest>-->
             <!--                    </archive>-->
             <!--                </configuration>-->

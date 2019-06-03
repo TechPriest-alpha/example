@@ -1,5 +1,6 @@
-package org.vdenisov;
+package example.io;
 
+import example.io.wicket.MyWicketApp;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -10,7 +11,6 @@ import io.undertow.servlet.api.DeploymentManager;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
-import org.vdenisov.wicket.MyWicketApp;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;

@@ -4,7 +4,7 @@
 
     <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-minisamples}"/>
 
-    <contextListener class="org.vdenisov.auxilliary.BridgeConfigListener"/>
+    <contextListener class="example.io.auxilliary.BridgeConfigListener"/>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${_INTERNAL_LOG_PATH}/${_INTERNAL_APP_NAME}.log</file>

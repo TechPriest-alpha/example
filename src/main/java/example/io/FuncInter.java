@@ -1,4 +1,4 @@
-package org.vdenisov;
+package example.io;
 
 @FunctionalInterface
 public interface FuncInter {

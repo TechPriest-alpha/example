@@ -1,4 +1,4 @@
-package org.vdenisov.auxilliary;
+package example.io.auxilliary;
 
 
 import ch.qos.logback.classic.jul.LevelChangePropagator;
