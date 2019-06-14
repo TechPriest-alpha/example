@@ -18,7 +18,7 @@
         <tomcat.version>9.0.14</tomcat.version>
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <undertow.version>2.0.20.Final</undertow.version>
+        <undertow.version>2.0.21.Final</undertow.version>
         <xnio.version>3.7.1.Final</xnio.version>
     </properties>
 
