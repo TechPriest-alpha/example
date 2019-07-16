@@ -6,16 +6,25 @@
 
     <groupId>example.io</groupId>
     <artifactId>item-management</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <prerequisites>
         <maven>3.6.0</maven>
     </prerequisites>
+    <modules>
+        <module>tech-core</module>
+        <module>business-core</module>
+        <module>external-integration</module>
+        <module>internal-integration</module>
+        <module>common-api</module>
+    </modules>
     <properties>
         <jdk.version>12</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <project.version>1.0-SNAPSHOT</project.version>
     </properties>
 
     <dependencyManagement>
@@ -27,6 +36,26 @@
                 <version>2.1.4.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>example.io</groupId>
+                <artifactId>tech-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>example.io</groupId>
+                <artifactId>external-integration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>example.io</groupId>
+                <artifactId>internal-integration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>example.io</groupId>
+                <artifactId>common-api</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -134,17 +163,6 @@
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
