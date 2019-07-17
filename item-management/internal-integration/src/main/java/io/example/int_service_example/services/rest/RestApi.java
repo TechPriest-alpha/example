@@ -1,4 +1,4 @@
-package io.example.int_service_example.services;
+package io.example.int_service_example.services.rest;
 
 import io.example.int_service_example.IntServiceExampleIncomingGateway;
 import io.example.int_service_example.data.IntServiceRequest;

@@ -1,6 +1,6 @@
 package io.example.int_service_example;
 
-import io.example.int_service_example.client.RestClient;
+import io.example.int_service_example.client.rest.RestClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

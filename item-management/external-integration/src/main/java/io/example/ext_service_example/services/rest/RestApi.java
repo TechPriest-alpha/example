@@ -1,4 +1,4 @@
-package io.example.ext_service_example.services;
+package io.example.ext_service_example.services.rest;
 
 import io.example.ext_service_example.ExtServiceExampleIncomingGateway;
 import io.example.ext_service_example.data.ExtServiceRequest;
