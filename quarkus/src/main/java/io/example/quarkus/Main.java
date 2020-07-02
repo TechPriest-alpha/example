@@ -2,6 +2,7 @@ package io.example.quarkus;
 
 
 import io.example.quarkus.services.HelloService;
+import io.quarkus.runtime.Quarkus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
