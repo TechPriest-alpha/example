@@ -4,10 +4,12 @@
         <property name="hibernate.connection.url">jdbc:hsqldb:mem:sakila;shutdown=true</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
+        <property name="hibernate.hbm2ddl.auto">create-drop</property>
 
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 
         <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.transaction.coordinator_class">jdbc</property>
 
         <!-- Vibur DBCP specific properties: -->
         <property name="hibernate.connection.provider_class">
