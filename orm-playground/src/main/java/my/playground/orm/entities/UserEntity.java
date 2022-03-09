@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import my.playground.orm.entities.sub.UserId;
 
+import java.util.UUID;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -14,7 +16,7 @@ import my.playground.orm.entities.sub.UserId;
 public class UserEntity {
 
     @EmbeddedId
-    private UserId id = new UserId();
+    private UserId id;
 
     private String name;
 
@@ -23,6 +25,7 @@ public class UserEntity {
     }
 
     public UserEntity(final String name) {
+        this.id = new UserId(UUID.randomUUID());
         this.name = name;
     }
 }

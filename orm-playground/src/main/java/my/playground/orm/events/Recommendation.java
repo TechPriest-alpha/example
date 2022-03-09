@@ -5,5 +5,5 @@ import my.playground.orm.entities.sub.UserId;
 
 public record Recommendation(UserId clientId,
                              UserId assistantId, String comment,
-                             Grade grade) {
+                             Grade grade) implements ClientEvent {
 }

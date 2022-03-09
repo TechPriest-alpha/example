@@ -11,5 +11,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class UserId implements Serializable {
-    private UUID id = UUID.randomUUID();
+    private UUID id;
+
+    public UserId(final UUID randomUUID) {
+        this.id = randomUUID;
+    }
 }

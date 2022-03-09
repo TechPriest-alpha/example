@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.transaction.Transactional;
+import my.playground.orm.entities.Client;
 import my.playground.orm.entities.UserEntity;
 import my.playground.orm.entities.sub.AssistantEntity;
 import my.playground.orm.entities.sub.UserId;
@@ -38,5 +39,9 @@ public class BasicOperation {
         } catch (final Exception ex) {
             transaction.rollback();
         }
+    }
+
+    public Client findClient(final UserId clientId) {
+        return em.find(Client.class, clientId);
     }
 }

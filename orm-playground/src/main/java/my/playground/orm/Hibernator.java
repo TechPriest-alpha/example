@@ -8,7 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -16,7 +15,6 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
@@ -33,7 +31,7 @@ public class Hibernator {
     private final EntityManager em;
 
     @Inject
-    public Hibernator(final BeanManager beanManager) throws IOException {
+    public Hibernator(final BeanManager beanManager) {
         this.standardRegistry = new StandardServiceRegistryBuilder()
             .configure("/hibernate.cfg.xml")
             .build();
@@ -46,19 +44,8 @@ public class Hibernator {
 
     @PreDestroy
     public void stop() {
-        final EntityTransaction transaction = em.getTransaction();
-        try {
-            transaction.begin();
-            em.flush();
-            transaction.commit();
-            log.info("EM Committed");
-        } catch (final Exception ex) {
-            transaction.rollback();
-            log.info("EM rolled back");
-        }
         em.close();
         sessionFactory.close();
-
         standardRegistry.close();
         log.info("Hibernator stopped");
     }
@@ -77,7 +64,7 @@ public class Hibernator {
 
     public Set<Class<?>> findAllClassesUsingClassLoader(final String packageName) {
         try (final InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replaceAll("[.]", "/"));
-             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
+             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             return reader.lines()
                 .flatMap(line -> line.endsWith(".class") ? Stream.of(getClass(line, packageName)) : findAllClassesUsingClassLoader(packageName + "." + line).stream())
                 .filter(Objects::nonNull)
