@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -45,8 +46,19 @@ public class Hibernator {
 
     @PreDestroy
     public void stop() {
+        final EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            em.flush();
+            transaction.commit();
+            log.info("EM Committed");
+        } catch (final Exception ex) {
+            transaction.rollback();
+            log.info("EM rolled back");
+        }
         em.close();
         sessionFactory.close();
+
         standardRegistry.close();
         log.info("Hibernator stopped");
     }
