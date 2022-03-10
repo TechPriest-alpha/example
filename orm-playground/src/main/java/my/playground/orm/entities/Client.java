@@ -20,6 +20,7 @@ import java.util.Objects;
 @EqualsAndHashCode(of = "user")
 public class Client {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long clientId;
 
     @OneToOne

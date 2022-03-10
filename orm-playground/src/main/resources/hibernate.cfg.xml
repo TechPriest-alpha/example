@@ -11,6 +11,8 @@
 
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.transaction.coordinator_class">jdbc</property>
+        <property name="hibernate.highlight_sql">true</property>
+        <property name="hibernate.use_sql_comments">true</property>
 
         <!-- Vibur DBCP specific properties: -->
         <property name="hibernate.connection.provider_class">

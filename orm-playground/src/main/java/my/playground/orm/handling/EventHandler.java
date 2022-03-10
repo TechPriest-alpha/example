@@ -32,7 +32,7 @@ public class EventHandler {
         if (event.newClient()) {
             client = createClient((ClientRegistration) event);
             clients.put(client.id(), client);
-            log.info("New client: {}", event.clientId());
+            log.info("New client: {}", client.id());
         } else {
             final UserId clientId = event.clientId();
             client = clients.get(clientId);
@@ -40,10 +40,10 @@ public class EventHandler {
                 client = basicOperation.findClient(clientId);
                 client.apply(event);
                 clients.put(clientId, client);
-                log.info("Existing client not in cache: {}", event.clientId());
+                log.info("Existing client not in cache: {}", client.id());
             } else {
                 client.apply(event);
-                log.info("Existing client in cache: {}", event.clientId());
+                log.info("Existing client in cache: {}", client.id());
             }
         }
         basicOperation.write(client);
