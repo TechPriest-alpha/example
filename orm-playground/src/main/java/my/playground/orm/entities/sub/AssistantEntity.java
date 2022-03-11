@@ -3,6 +3,7 @@ package my.playground.orm.entities.sub;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import my.playground.orm.entities.Client;
 import my.playground.orm.entities.UserEntity;
 import my.playground.orm.events.Recommendation;
 
@@ -42,6 +43,6 @@ public class AssistantEntity {
     }
 
     public void addRecommendation(final Recommendation recommendation) {
-        recommendations.add(new RecommendationEntity(recommendation.grade(), new UserEntity(recommendation.clientId()), recommendation.comment()));
+        recommendations.add(new RecommendationEntity(recommendation.grade(), new Client(recommendation.clientId()), recommendation.comment()));
     }
 }

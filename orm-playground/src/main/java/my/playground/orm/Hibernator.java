@@ -52,7 +52,7 @@ public class Hibernator {
 
     public void getX() {
         try (final var s = sessionFactory.openSession()) {
-            log.info("Hi: {}", em.isOpen());
+            log.info("Hi: {}, em: {}", s.isOpen(), em.isOpen());
         }
     }
 

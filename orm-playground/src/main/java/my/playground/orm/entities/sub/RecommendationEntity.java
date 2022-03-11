@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import my.playground.orm.domain.Grade;
-import my.playground.orm.entities.UserEntity;
+import my.playground.orm.entities.Client;
 
 @Entity
 @Data
@@ -17,11 +17,11 @@ public class RecommendationEntity {
     private Grade grade;
 
     @OneToOne
-    private UserEntity source;
+    private Client source;
 
     private String comment;
 
-    public RecommendationEntity(final Grade grade, final UserEntity source, final String comment) {
+    public RecommendationEntity(final Grade grade, final Client source, final String comment) {
         this.grade = grade;
         this.source = source;
         this.comment = comment;

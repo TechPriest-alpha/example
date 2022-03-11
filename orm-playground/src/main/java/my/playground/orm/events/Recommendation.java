@@ -1,9 +1,8 @@
 package my.playground.orm.events;
 
 import my.playground.orm.domain.Grade;
-import my.playground.orm.entities.sub.UserId;
 
-public record Recommendation(UserId clientId,
-                             UserId assistantId, String comment,
+public record Recommendation(Long clientId,
+                             Long assistanceId, String comment,
                              Grade grade) implements ClientEvent {
 }

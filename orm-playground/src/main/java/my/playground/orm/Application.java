@@ -25,8 +25,7 @@ public class Application {
 
     private static void runScript(final WeldContainer weld) throws ExecutionException, InterruptedException {
         weld.select(Hibernator.class).get().getX();
-
-        final var basicOperation = weld.select(BasicOperation.class).get();
+        final var basicOperation = weld.select(OrmOperations.class).get();
         log.info("Found helper: {}", basicOperation.readHelper(1L));
 
         final var events = weld.event().select().fireAsync(new ClientRegistration("New client Async")).toCompletableFuture().get();

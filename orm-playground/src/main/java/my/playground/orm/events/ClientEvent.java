@@ -1,13 +1,12 @@
 package my.playground.orm.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import my.playground.orm.entities.sub.UserId;
 
 public interface ClientEvent {
 
     ObjectMapper om = new ObjectMapper().findAndRegisterModules();
 
-    UserId clientId();
+    Long clientId();
 
     default boolean newClient() {
         return clientId() == null;

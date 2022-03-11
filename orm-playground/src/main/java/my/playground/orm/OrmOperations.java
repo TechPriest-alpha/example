@@ -17,11 +17,11 @@ import java.util.List;
 @SuppressWarnings("ClassCanBeRecord")
 @Slf4j
 @ApplicationScoped
-public class BasicOperation {
+public class OrmOperations {
     private final EntityManager em;
 
     @Inject
-    public BasicOperation(final EntityManager em) {
+    public OrmOperations(final EntityManager em) {
         this.em = em;
     }
 
@@ -34,22 +34,28 @@ public class BasicOperation {
     }
 
     @Transactional
-    public void write(final Object entity) {
+    public <T> T write(final T entity) {
         final EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
-            if (!em.contains(entity)) em.merge(entity);
-            em.persist(entity);
+            final T result;
+            if (!em.contains(entity)) result = em.merge(entity);
+            else {
+                em.persist(entity);
+                result = entity;
+            }
             em.flush();
             transaction.commit();
+            return result;
         } catch (final Exception ex) {
             log.error("Error in write", ex);
             transaction.rollback();
+            return null;
         }
     }
 
-    public Client findClient(final UserId clientId) {
-        return em.find(Client.class, clientId);
+    public Client findClient(final Client client) {
+        return em.merge(client);
     }
 
     public List<UserEntity> readAllUsers() {
@@ -69,5 +75,9 @@ public class BasicOperation {
         final var criteria = em.getCriteriaBuilder().createQuery(AssistantEntity.class).distinct(true);
         criteria.select(criteria.from(AssistantEntity.class));
         return em.createQuery(criteria).getResultList();
+    }
+
+    public boolean entityExists(final UserEntity user) {
+        return em.contains(user);
     }
 }
