@@ -1,7 +1,9 @@
 package my.playground.orm;
 
 import lombok.extern.slf4j.Slf4j;
-import my.playground.orm.events.ClientRegistration;
+import my.playground.orm.firsttry.OrmOperations;
+import my.playground.orm.firsttry.TryEvents;
+import my.playground.orm.firsttry.events.ClientRegistration;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
