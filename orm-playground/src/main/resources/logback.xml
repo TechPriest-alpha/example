@@ -9,7 +9,7 @@
         </encoder>
     </appender>
     <logger name="my.playground.orm" level="INFO"/>
-    <logger name="org.hibernate.SQL" level="TRACE"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
 <!--    <logger name="org.hibernate.type" level="TRACE"/>-->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

@@ -1,4 +1,4 @@
-package my.orm.playground;
+package my.playground.orm;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

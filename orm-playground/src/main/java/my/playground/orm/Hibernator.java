@@ -37,6 +37,7 @@ public class Hibernator {
             .build();
         final var metadataSources = new MetadataSources(standardRegistry);
         findAllClassesUsingClassLoader("my.playground.orm.firsttry.entities").forEach(metadataSources::addAnnotatedClass);
+        findAllClassesUsingClassLoader("my.playground.orm.secondtry.entities").forEach(metadataSources::addAnnotatedClass);
         final var metadata = metadataSources.buildMetadata();
         this.sessionFactory = metadata.getSessionFactoryBuilder().applyBeanManager(beanManager).build();
         this.em = sessionFactory.createEntityManager();

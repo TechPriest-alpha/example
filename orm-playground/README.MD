@@ -1,4 +1,10 @@
 Basic application to learn ORM features with Hibernate.
+
+Application consists of two main packages: first try and second try, which are detailed below.
+
+
+<h1>First try</h1>
+Self-issued task to implement sort of an application using ORM(Hibernate) and DI(Weld). 
 Core functionality is as follows:
 1. There are clients of the system.
 2. Clients might require help of an assistant.
@@ -25,3 +31,9 @@ which make code much more verbose and complex than it should be.
 Unfortunately only other option is to implement custom Unit-of-Work and/or fallback to other approaches (myBatis, jOOQ) which will be considered in a separate app.
 3. Effective way to exchange events within application. While weld provides facility for event exchange, it still requires 
 certain adjustments to application logic. So we again either have to accept non-pure solutions, or write a lot of custom boilerplate (possible with the use of Reflection API).
+
+<h1>Second try</h1>
+Tasks and exercises from the book 
+© Joseph B. Ottinger, Jeff Linwood and Dave Minter 2016 J. B. Ottinger et al., Beginning Hibernate , DOI 10.1007/978-1-4842-2319-2_3 19
+Ottinger, Joseph B., et al. Beginning Hibernate : For Hibernate 5, Apress L. P., 2016. ProQuest Ebook Central, http://ebookcentral.proquest.com/lib/luxoft/detail.action?docID=4741451.
+Created from luxoft on 2022-03-28 11:53:50. 
