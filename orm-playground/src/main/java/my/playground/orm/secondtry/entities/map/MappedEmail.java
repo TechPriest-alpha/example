@@ -9,13 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "mapped_email")
 public class MappedEmail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column
     private String subject;
-    @OneToOne(mappedBy = "email")
+    @OneToOne(mappedBy = "email", cascade = CascadeType.ALL)
     private MappedMessage message;
 
     public MappedEmail(final String broken) {
@@ -24,7 +25,7 @@ public class MappedEmail {
 
     @Override
     public String toString() {
-        return "NonMappedEmail{" +
+        return "MappedEmail{" +
             "id=" + id +
             ", subject='" + subject + '\'' +
             ", message=" + (message == null ? null : message.getId() + ":" + message.content + ":" + (message.getEmail() == null ? null : message.getEmail().subject)) +

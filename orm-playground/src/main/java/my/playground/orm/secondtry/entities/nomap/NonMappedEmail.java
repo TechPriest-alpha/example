@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "non_mapped_email")
 public class NonMappedEmail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

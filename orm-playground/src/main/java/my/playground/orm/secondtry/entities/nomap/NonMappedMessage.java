@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "non_mapped_message")
 public class NonMappedMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
