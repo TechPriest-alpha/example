@@ -7,11 +7,52 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 class MappedForEagerTest {
+    @Test
+    @DisplayName("Get data with named package-level query")
+    void useNamedQuery() {
+        try (final var session = SessionUtil.getSession()) {
+            final var tx = session.beginTransaction();
+            var email = new MappedEmailEager("email1");
+            var message = new MappedMessageEager("message with data1");
+            message.setEmail(email);
+            session.persist(message);
+
+            email = new MappedEmailEager("email2");
+            message = new MappedMessageEager("message with data2");
+            message.setEmail(email);
+            session.persist(message);
+
+            email = new MappedEmailEager("email3");
+            message = new MappedMessageEager("message with data3");
+            message.setEmail(email);
+            session.persist(message);
+
+            email = new MappedEmailEager("email33");
+            message = new MappedMessageEager("message with data33");
+            message.setEmail(email);
+            session.persist(message);
+            tx.commit();
+        }
+
+        try (final var session = SessionUtil.getSession()) { //weirdness: execs query per each list item
+            session.setJdbcBatchSize(100);
+            final var q = session.createNamedQuery("findMessageByContent", MappedMessageEager.class);
+            q.setParameter("input", "message with data");
+            assertEquals(4, q.list().size());
+        }
+
+        try (final var session = SessionUtil.getSession()) {
+            session.setJdbcBatchSize(100);
+            final var q = session.createNamedQuery("findMessageByContent", MappedMessageEager.class);
+            q.setParameter("input", "message with data3");
+            assertEquals(2, q.list().size());
+        }
+    }
+
     @Test
     @DisplayName("Email in Message will be not null")
     void emailInMessageWillBeNotNull() {

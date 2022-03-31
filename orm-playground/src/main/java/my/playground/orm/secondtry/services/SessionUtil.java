@@ -24,6 +24,7 @@ public class SessionUtil {
     private SessionUtil() {
         final var registry = new StandardServiceRegistryBuilder().configure().build();
         this.factory = new MetadataSources(registry)
+            .addPackage("my.playground.orm.secondtry.entities")
             .addAnnotatedClass(Person.class)
             .addAnnotatedClass(Ranking.class)
             .addAnnotatedClass(Skill.class)
