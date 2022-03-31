@@ -13,7 +13,7 @@ import lombok.Setter;
 public class NonMappedEmail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column
     private String subject;
     @OneToOne //(mappedBy = "email")
@@ -28,7 +28,7 @@ public class NonMappedEmail {
         return "NonMappedEmail{" +
             "id=" + id +
             ", subject='" + subject + '\'' +
-            ", message=" + (message == null ? null : message.getId() + ":" + message.content + ":" + (message.getEmail() == null ? null : message.getEmail().subject)) +
+            ", message=" + (message == null ? null : message.getId() + ":" + message.getContent() + ":" + (message.getEmail() == null ? null : message.getEmail().subject)) +
             '}';
     }
 }

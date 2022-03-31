@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -12,12 +15,12 @@ import lombok.Setter;
 @Table(name = "non_mapped_message")
 public class NonMappedMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    @UuidGenerator
+    private UUID id;
     @Column
-    String content;
+    private String content;
     @OneToOne
-    NonMappedEmail email;
+    private NonMappedEmail email;
 
     public NonMappedMessage(final String broken) {
         this.content = broken;

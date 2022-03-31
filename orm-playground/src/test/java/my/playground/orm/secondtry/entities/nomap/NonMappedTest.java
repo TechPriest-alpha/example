@@ -5,6 +5,8 @@ import my.playground.orm.secondtry.services.SessionUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -13,7 +15,7 @@ class NonMappedTest {
     @Test
     @DisplayName("Email in Message will be null")
     void emailInMessageWillBeNull() {
-        Long emailId; Long messageId; NonMappedEmail email; NonMappedMessage message;
+        Long emailId; UUID messageId; NonMappedEmail email; NonMappedMessage message;
         try (final var session = SessionUtil.getSession()) {
             final var tx = session.beginTransaction();
             email = new NonMappedEmail("Broken");
@@ -43,7 +45,7 @@ class NonMappedTest {
     @Test
     @DisplayName("Email in Message will be not null")
     void emailInMessageWillBeNotNull() {
-        Long emailId; Long messageId; NonMappedEmail email; NonMappedMessage message;
+        Long emailId; UUID messageId; NonMappedEmail email; NonMappedMessage message;
         try (final var session = SessionUtil.getSession()) {
             final var tx = session.beginTransaction();
             email = new NonMappedEmail("Broken");

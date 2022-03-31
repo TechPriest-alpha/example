@@ -1,29 +1,32 @@
-package my.playground.orm.secondtry.entities.map;
+package my.playground.orm.secondtry.entities.lazyness;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
+//@Setter
 @NoArgsConstructor
 @Table(name = "mapped_message")
-public class MappedMessage {
+public class MappedMessageLazy {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid")
     @UuidGenerator
     private UUID id;
     @Column
     private String content;
-    @OneToOne(cascade = CascadeType.ALL)
-    private MappedEmail email;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @LazyToOne(LazyToOneOption.PROXY)
+    @Setter
+    private MappedEmailLazy email;
 
-    public MappedMessage(final String broken) {
+    public MappedMessageLazy(final String broken) {
         this.content = broken;
     }
 

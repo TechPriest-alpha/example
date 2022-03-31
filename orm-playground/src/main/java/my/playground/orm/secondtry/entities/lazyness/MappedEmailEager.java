@@ -1,25 +1,25 @@
-package my.playground.orm.secondtry.entities.map;
+package my.playground.orm.secondtry.entities.lazyness;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
+//@Setter
 @NoArgsConstructor
 @Table(name = "mapped_email")
-public class MappedEmail {
+public class MappedEmailEager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column
     private String subject;
-    @OneToOne(mappedBy = "email", cascade = CascadeType.ALL)
-    private MappedMessage message;
+    @OneToOne(mappedBy = "email", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @LazyToOne(LazyToOneOption.PROXY)
+    private MappedMessageEager message;
 
-    public MappedEmail(final String broken) {
+    public MappedEmailEager(final String broken) {
         this.subject = broken;
     }
 
