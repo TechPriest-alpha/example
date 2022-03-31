@@ -3,6 +3,7 @@ package my.playground.orm.secondtry.services;
 import my.playground.orm.secondtry.entities.Person;
 import my.playground.orm.secondtry.entities.Ranking;
 import my.playground.orm.secondtry.entities.Skill;
+import my.playground.orm.secondtry.entities.hierarchy.*;
 import my.playground.orm.secondtry.entities.lazyness.MappedEmailEager;
 import my.playground.orm.secondtry.entities.lazyness.MappedEmailLazy;
 import my.playground.orm.secondtry.entities.lazyness.MappedMessageEager;
@@ -34,6 +35,12 @@ public class SessionUtil {
             .addAnnotatedClass(MappedMessageLazy.class)
             .addAnnotatedClass(MappedEmailEager.class)
             .addAnnotatedClass(MappedMessageEager.class)
+            .addAnnotatedClass(JoinTableParent.class)
+            .addAnnotatedClass(JoinTableInheritor.class)
+            .addAnnotatedClass(SingleTableParent.class)
+            .addAnnotatedClass(SingleTableInheritor.class)
+            .addAnnotatedClass(SeparateTableParent.class)
+            .addAnnotatedClass(SeparateTableInheritor.class)
             .buildMetadata()
             .buildSessionFactory();
     }

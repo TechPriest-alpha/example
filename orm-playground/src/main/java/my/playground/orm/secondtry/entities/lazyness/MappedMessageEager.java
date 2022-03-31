@@ -14,12 +14,13 @@ import java.util.UUID;
 //@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "mapped_message")
+@Table(name = "mapped_message_eager")
+@SecondaryTable(name = "mapped_message_content")
 public class MappedMessageEager {
     @Id
     @UuidGenerator
     private UUID id;
-    @Column
+    @Column(table = "mapped_message_content")
     private String content;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @LazyToOne(LazyToOneOption.PROXY)
