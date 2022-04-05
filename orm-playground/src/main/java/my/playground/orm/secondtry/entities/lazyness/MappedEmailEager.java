@@ -15,6 +15,7 @@ public class MappedEmailEager {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(table = "mapped_email_subject")
+    @Basic(fetch = FetchType.EAGER)
     private String subject;
     @OneToOne(mappedBy = "email", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @LazyToOne(LazyToOneOption.PROXY)

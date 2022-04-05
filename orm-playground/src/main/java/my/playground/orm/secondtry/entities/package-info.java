@@ -2,8 +2,14 @@
     {
         @NamedQuery(
             name = "findMessageByContent",
-            query = "from MappedMessageEager m where m.content like '%' || :input || '%'",
-            fetchSize = 10,
+            query = "from MappedMessageEager m where m.content like '%' || :input || '%' order by m.id",
+//            fetchSize = 10,
+            readOnly = true
+        ),
+        @NamedQuery(
+            name = "findMappedMessageByContent",
+            query = "from MappedMessage m where m.content like '%' || :input || '%' order by m.id",
+//            fetchSize = 10,
             readOnly = true
         )
     }

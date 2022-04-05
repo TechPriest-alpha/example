@@ -8,6 +8,9 @@ import my.playground.orm.secondtry.entities.lazyness.MappedEmailEager;
 import my.playground.orm.secondtry.entities.lazyness.MappedEmailLazy;
 import my.playground.orm.secondtry.entities.lazyness.MappedMessageEager;
 import my.playground.orm.secondtry.entities.lazyness.MappedMessageLazy;
+import my.playground.orm.secondtry.entities.many.Ent1;
+import my.playground.orm.secondtry.entities.many.Ent2;
+import my.playground.orm.secondtry.entities.many.Ent3;
 import my.playground.orm.secondtry.entities.map.MappedEmail;
 import my.playground.orm.secondtry.entities.map.MappedMessage;
 import my.playground.orm.secondtry.entities.nomap.NonMappedEmail;
@@ -42,6 +45,9 @@ public class SessionUtil {
             .addAnnotatedClass(SingleTableInheritor.class)
             .addAnnotatedClass(SeparateTableParent.class)
             .addAnnotatedClass(SeparateTableInheritor.class)
+            .addAnnotatedClass(Ent1.class)
+            .addAnnotatedClass(Ent2.class)
+            .addAnnotatedClass(Ent3.class)
             .buildMetadata()
             .buildSessionFactory();
     }

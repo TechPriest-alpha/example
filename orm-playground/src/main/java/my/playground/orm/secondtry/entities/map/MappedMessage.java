@@ -20,7 +20,7 @@ public class MappedMessage {
     private UUID id;
     @Column
     private String content;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = true)
     private MappedEmail email;
 
     public MappedMessage(final String broken) {

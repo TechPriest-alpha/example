@@ -21,6 +21,7 @@ public class MappedMessageEager {
     @UuidGenerator
     private UUID id;
     @Column(table = "mapped_message_content")
+    @Basic(fetch = FetchType.EAGER)
     private String content;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @LazyToOne(LazyToOneOption.PROXY)

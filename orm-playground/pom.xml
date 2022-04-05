@@ -14,6 +14,7 @@
         <slf.version>1.7.36</slf.version>
         <jackson.version>2.13.2</jackson.version>
         <hibernate.version>6.0.0.CR2</hibernate.version>
+        <jooq.version>3.16.5</jooq.version>
     </properties>
 
     <dependencies>
@@ -57,9 +58,14 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate.orm</groupId>-->
+<!--            <artifactId>hibernate-vibur</artifactId>-->
+<!--            <version>${hibernate.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-vibur</artifactId>
+            <artifactId>hibernate-c3p0</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
@@ -95,7 +101,21 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

@@ -39,17 +39,28 @@ class MappedForEagerTest {
         }
 
         try (final var session = SessionUtil.getSession()) { //weirdness: execs query per each list item
+            log.info("Before query");
             session.setJdbcBatchSize(100);
             final var q = session.createNamedQuery("findMessageByContent", MappedMessageEager.class);
             q.setParameter("input", "message with data");
+            q.setMaxResults(100);
+            log.info("Intermediate: {}", q.getResultList());
             assertEquals(4, q.list().size());
+            log.info("After query");
         }
 
         try (final var session = SessionUtil.getSession()) {
             session.setJdbcBatchSize(100);
             final var q = session.createNamedQuery("findMessageByContent", MappedMessageEager.class);
+            q.setMaxResults(100);
             q.setParameter("input", "message with data3");
             assertEquals(2, q.list().size());
+        }
+
+        try (final var session = SessionUtil.getSession()) {
+            final var q = session.createQuery("from MappedMessageEager mm JOIN FETCH MappedEmailEager me on mm.email.id=me.id", MappedMessageEager.class);
+            q.setMaxResults(100);
+            assertEquals(4, q.list().size());
         }
     }
 

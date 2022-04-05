@@ -37,3 +37,6 @@ Tasks and exercises from the book
 © Joseph B. Ottinger, Jeff Linwood and Dave Minter 2016 J. B. Ottinger et al., Beginning Hibernate , DOI 10.1007/978-1-4842-2319-2_3 19
 Ottinger, Joseph B., et al. Beginning Hibernate : For Hibernate 5, Apress L. P., 2016. ProQuest Ebook Central, http://ebookcentral.proquest.com/lib/luxoft/detail.action?docID=4741451.
 Created from luxoft on 2022-03-28 11:53:50. 
+
+Interesting: my.playground.orm.secondtry.entities.map.MappedTest.useNamedQuery test fetches every single records in a resulting list with a separate query (at least this is how it seems in log).
+Attempts to change pool, settings, mappings didn't bring any success. Whatever the cause, it is not obvious and quite frustrating.  

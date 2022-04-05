@@ -16,7 +16,7 @@ public class MappedEmail {
     Long id;
     @Column
     private String subject;
-    @OneToOne(mappedBy = "email", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "email", cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = true)
     private MappedMessage message;
 
     public MappedEmail(final String broken) {
