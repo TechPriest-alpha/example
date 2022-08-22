@@ -16,7 +16,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, output: OutputMarker, logic1: Logic1, logic2: Logic2) extends Loggable {
+class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, logic1: Logic1, logic2: Logic2) extends Loggable {
+
+  @SpyBean
+  var output: Output = null
+
 
   @BeforeEach def setup(): Unit = {
     logic1.processedEvents.clear()
@@ -37,7 +41,7 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, output: Out
     assert(logic1.processedEvents.containsValue(event))
     assert(logic2.processedEvents.isEmpty)
 
-    //    Mockito.verify(output).doNothing();
+    Mockito.verify(output).doNothing()
   }
 
   @Test def hello2(): Unit = {
@@ -53,12 +57,12 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, output: Out
     assert(logic2.processedEvents.containsKey(event.data2))
     assert(logic2.processedEvents.containsValue(event))
     assert(logic1.processedEvents.isEmpty)
-    //    Mockito.verify(output).doNothing();
+    Mockito.verify(output).doNothing();
   }
 
 
   @Test
-  @Disabled
+  @Disabled("Since json has no typing, DomainEvent2 is deserialized as DomainEvent1 causing NPE in Logic1. Need to think of better code structure")
   def hello3(): Unit = {
     val event = DomainEvent2("example2")
     mockMvc.perform(MockMvcRequestBuilders.post("/domain/event1")

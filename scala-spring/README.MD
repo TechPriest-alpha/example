@@ -6,5 +6,4 @@ Certain facilities seem to be working more or less properly (injection, bean sea
 to work with Spring methods took some effort  (for future - scala error messages and available documentation are at best 'scarce')
 .
 
-Current issue is that Mocks won't proxy Scala classes, thus making certain checks in tests difficult.
-On one hand - using mocks is a tradeoff, so probably its for good. On the other hand - more boilerplate might be required.
+Initial issues (getting all beans by type, mocking beans in tests) seem to be resolved. More experiments await :)
