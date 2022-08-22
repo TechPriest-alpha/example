@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
 
 @Component
-class Logic1() extends LogicFor[DomainEvent1] {
+case class Logic1() extends LogicFor[DomainEvent1] {
 
   override def accept(event: DomainEvent1): Unit = {
     log.info("Domain event1: {} processed", event)
-    processedEvents.put(event.data, event)
+    processedEvents.put(event.data1, event)
   }
 }
 

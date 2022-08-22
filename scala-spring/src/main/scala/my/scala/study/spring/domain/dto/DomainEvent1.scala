@@ -1,5 +1,7 @@
 package my.scala.study.spring.domain.dto
 
-case class DomainEvent1(data: String) {
+import org.springframework.lang.NonNull
+
+case class DomainEvent1(@NonNull data1: String) {
 
 }

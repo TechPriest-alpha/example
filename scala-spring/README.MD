@@ -1,15 +1,10 @@
 Attempt to implement very basic app with Spring and scala3.
 
-Aim was to try powerful type system of scala to deduce proper processing beans on-the fly.
+So far there was a moderate success.
 
-Unfortunately Scala's type system proved too powerful to me.
+Certain facilities seem to be working more or less properly (injection, bean search). Though getting Scala type system
+to work with Spring methods took some effort  (for future - scala error messages and available documentation are at best 'scarce')
+.
 
-For example, I was unable to create a collection like val x: List[LogicFor] = Array(Logic1, Logic2). See Input.scala.
-
-Either there is something very simple I'm missing, or something too complex for me, so I can't understand.
-
-Either way, error messages, documentation and info in Google are very scarce and provide no useful hints on what's going on.
-
-All either are 'hello world' level, or too advanced to grasp without lengthy research.
-
-Current conclusion: not for an average developer, neither for anything enterprise-like.
+Current issue is that Mocks won't proxy Scala classes, thus making certain checks in tests difficult.
+On one hand - using mocks is a tradeoff, so probably its for good. On the other hand - more boilerplate might be required.

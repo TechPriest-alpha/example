@@ -1,6 +1,5 @@
 package my.scala.study.spring.domain
 
-import hacks.ClassGetter
 import my.scala.study.spring.BootConfig
 import my.scala.study.spring.domain.dto.{DomainEvent1, DomainEvent2, Result}
 import my.scala.study.spring.system.{Loggable, LogicFor}
@@ -15,7 +14,7 @@ import scala.reflect.ClassTag
 
 @RestController("domainInput")
 @RequestMapping(path = Array("/domain"))
-class Input @Autowired()(ctx: ApplicationContext, output: Output) extends Loggable {
+class Input @Autowired()(val logics: java.util.List[LogicFor[?]], val output: Output) extends Loggable {
 
   @PostMapping(value = Array("/event1"), consumes = Array(MediaType.APPLICATION_JSON_VALUE), produces = Array(MediaType.APPLICATION_JSON_VALUE))
   def acceptChange(@RequestBody event: DomainEvent1): Result = {
@@ -29,11 +28,13 @@ class Input @Autowired()(ctx: ApplicationContext, output: Output) extends Loggab
 
   private def handle(event: Any) = {
 
-    val logics = ctx.getBeansOfType(ClassGetter.getClassOf).values()
-    //    logics.stream()
-    //      .map(l => l.asInstanceOf[LogicFor])
-    //      .filter(l => l.predicate(event))
-    //      .foreach(l => l.accept(event))
+    //    val x: List[LogicFor[?]] = List(Logic1(), Logic2())
+    //    val logics = ctx.getBeansOfType(classOf[LogicFor[?]]).values()
+    logics.stream()
+      .filter(l => l.predicate(event))
+      .forEach(l => l.asInstanceOf[LogicFor[event.type]].accept(event))
+
+    log.info("Logics: {}", logics)
     output.doNothing()
     new Result("OK", 0)
   }
