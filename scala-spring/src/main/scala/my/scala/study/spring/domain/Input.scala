@@ -34,7 +34,7 @@ class Input @Autowired()(val logics: java.util.List[LogicFor[?]], val output: Ou
       .filter(l => l.predicate(event))
       .forEach(l => l.asInstanceOf[LogicFor[event.type]].accept(event))
 
-    log.info("Logics: {}", logics)
+//    log.info("Logics: {}", logics)
     output.doNothing()
     new Result("OK", 0)
   }

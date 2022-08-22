@@ -4,3 +4,13 @@ spring:
 
 server:
   port: 8080
+
+domain:
+  custom1:
+    key1: val12
+    key2: true
+    key3: 1
+  custom2:
+    key1: val21
+    key2: false
+    key3: -1
