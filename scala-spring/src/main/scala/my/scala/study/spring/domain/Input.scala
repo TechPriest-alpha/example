@@ -1,6 +1,7 @@
 package my.scala.study.spring.domain
 
 import my.scala.study.spring.BootConfig
+import my.scala.study.spring.domain.cfg.DomainConfig
 import my.scala.study.spring.domain.dto.{DomainEvent1, DomainEvent2, Result}
 import my.scala.study.spring.system.{Loggable, LogicFor}
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +35,7 @@ class Input @Autowired()(val logics: java.util.List[LogicFor[?]], val output: Ou
       .filter(l => l.predicate(event))
       .forEach(l => l.asInstanceOf[LogicFor[event.type]].accept(event))
 
-//    log.info("Logics: {}", logics)
+    //    log.info("Logics: {}", logics)
     output.doNothing()
     new Result("OK", 0)
   }
