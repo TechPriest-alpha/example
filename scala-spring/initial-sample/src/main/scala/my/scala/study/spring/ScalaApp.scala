@@ -7,10 +7,8 @@ import org.springframework.boot.SpringApplication
  * https://dzone.com/articles/spring-scala-cloud-psh
  * for initial inspiration. Had to add adjustments for scala3 however.
  */
-object ScalaApp extends App {
-  @main def hello(): Unit = {
-    SpringApplication.run(classOf[BootConfig])
-  }
+@main def hello(): Unit = {
+  SpringApplication.run(classOf[BootConfig])
 }
 
 
