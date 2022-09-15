@@ -5,7 +5,6 @@ import akka.actor.typed.scaladsl.Behaviors
 import org.springframework.stereotype.Service
 
 //#greeter-main
-@Service
 open object GreeterMain {
 
   final case class SayHello(name: String)
@@ -25,3 +24,5 @@ open object GreeterMain {
       }
     }
 }
+
+

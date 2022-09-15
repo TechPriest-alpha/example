@@ -5,8 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import org.springframework.stereotype.Service
 
 //#greeter-actor
-@Service
-object Greeter {
+open object Greeter {
   final case class Greet(whom: String, replyTo: ActorRef[Greeted])
 
   final case class Greeted(whom: String, from: ActorRef[Greet])
