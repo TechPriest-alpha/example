@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: Akka Study
+
+server:
+  port: 8081

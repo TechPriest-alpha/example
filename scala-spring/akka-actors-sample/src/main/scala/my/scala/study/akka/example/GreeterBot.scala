@@ -4,21 +4,9 @@ import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import com.typesafe.scalalogging.Logger
 import my.scala.study.akka.example.GreeterMain.SayHello
+import org.springframework.stereotype.Service
 
-//#greeter-actor
-object Greeter {
-  final case class Greet(whom: String, replyTo: ActorRef[Greeted])
 
-  final case class Greeted(whom: String, from: ActorRef[Greet])
-
-  def apply(): Behavior[Greet] = Behaviors.receive { (context, message) =>
-    context.log.info("Hello {}!", message.whom)
-    //#greeter-send-messages
-    message.replyTo ! Greeted(message.whom, context.self)
-    //#greeter-send-messages
-    Behaviors.same
-  }
-}
 //#greeter-actor
 
 //#greeter-bot
@@ -44,26 +32,7 @@ object GreeterBot {
 }
 //#greeter-bot
 
-//#greeter-main
-object GreeterMain {
 
-  final case class SayHello(name: String)
-
-  def apply(): Behavior[SayHello] =
-    Behaviors.setup { context =>
-      //#create-actors
-      val greeter = context.spawn(Greeter(), "greeter")
-      //#create-actors
-
-      Behaviors.receiveMessage { message =>
-        //#create-actors
-        val replyTo = context.spawn(GreeterBot(max = 3), message.name)
-        //#create-actors
-        greeter ! Greeter.Greet(message.name, replyTo)
-        Behaviors.same
-      }
-    }
-}
 //#greeter-main
 
 //#main-class

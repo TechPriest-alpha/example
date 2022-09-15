@@ -3,7 +3,7 @@
 
     <property name="_INTERNAL_LOG_PATH" value="${LOG_PATH:-./logs}"/>
 
-    <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-initial-sample}"/>
+    <property name="_INTERNAL_APP_NAME" value="${APP_NAME:-akka-actors}"/>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${_INTERNAL_LOG_PATH}/${_INTERNAL_APP_NAME}.log</file>
