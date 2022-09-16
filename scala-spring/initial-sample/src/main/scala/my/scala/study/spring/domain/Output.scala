@@ -1,7 +1,8 @@
 package my.scala.study.spring.domain
 
 import com.typesafe.scalalogging.Logger
-import my.scala.study.spring.system.{Loggable, OutputMarker}
+import my.scala.study.Loggable
+import my.scala.study.spring.system.OutputMarker
 import org.springframework.stereotype.Component
 
 @Component

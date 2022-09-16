@@ -1,9 +1,10 @@
 package my.scala.study.spring.domain
 
+import my.scala.study.Loggable
 import my.scala.study.spring.BootConfig
 import my.scala.study.spring.domain.cfg.DomainConfig
 import my.scala.study.spring.domain.dto.{DomainEvent1, DomainEvent2, Result}
-import my.scala.study.spring.system.{Loggable, LogicFor}
+import my.scala.study.spring.system.LogicFor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.http.MediaType

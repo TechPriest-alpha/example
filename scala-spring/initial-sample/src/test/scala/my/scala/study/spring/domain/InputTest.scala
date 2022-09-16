@@ -1,8 +1,9 @@
 package my.scala.study.spring.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import my.scala.study.Loggable
 import my.scala.study.spring.domain.dto.{DomainEvent1, DomainEvent2, Result}
-import my.scala.study.spring.system.{Loggable, OutputMarker}
+import my.scala.study.spring.system.OutputMarker
 import org.junit.jupiter.api.{BeforeEach, Disabled, Test}
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired

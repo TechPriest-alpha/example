@@ -1,4 +1,4 @@
-package my.scala.study.spring.system
+package my.scala.study
 
 trait Stringable {
   private lazy val cache: String = {

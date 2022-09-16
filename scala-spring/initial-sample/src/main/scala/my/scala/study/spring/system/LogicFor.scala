@@ -1,5 +1,6 @@
 package my.scala.study.spring.system
 
+import my.scala.study.Loggable
 import my.scala.study.spring.domain.cfg.DomainConfig
 import org.springframework.beans.factory.annotation.Autowired
 

@@ -1,7 +1,7 @@
 package my.scala.study.spring.api
 
 import com.typesafe.scalalogging.Logger
-import my.scala.study.spring.system.Loggable
+import my.scala.study.Loggable
 import org.springframework.web.bind.annotation.{PathVariable, RequestMapping, RestController}
 
 @RestController("hello")

@@ -1,4 +1,4 @@
-package my.scala.study.spring.system
+package my.scala.study
 
 import com.typesafe.scalalogging.Logger
 
