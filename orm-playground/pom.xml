@@ -12,7 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <slf.version>1.7.36</slf.version>
-        <jackson.version>2.13.2</jackson.version>
+        <jackson.version>2.13.4.1</jackson.version>
         <hibernate.version>6.0.0.CR2</hibernate.version>
         <jooq.version>3.16.5</jooq.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}.2</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
