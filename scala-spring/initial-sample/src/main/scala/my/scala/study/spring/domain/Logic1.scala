@@ -3,18 +3,19 @@ package my.scala.study.spring.domain
 import my.scala.study.Loggable
 import my.scala.study.spring.domain.cfg.DomainConfig
 import my.scala.study.spring.domain.dto.DomainEvent1
-import my.scala.study.spring.system.LogicFor
+import my.scala.study.spring.system.{LogicFor, OutputMarker}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.{CompletableFuture, ConcurrentHashMap}
 
 @Component
 case class Logic1 @Autowired()(domainConfig: DomainConfig) extends LogicFor[DomainEvent1](domainConfig) {
 
-  override def accept(event: DomainEvent1): Unit = {
+  override def accept(event: DomainEvent1): CompletableFuture[OutputMarker] = {
     log.info("Domain event1: {} processed with cfg: {}", event, domainConfig.custom1)
     processedEvents.put(event.data1, event)
+    CompletableFuture.completedFuture(Output())
   }
 }
 

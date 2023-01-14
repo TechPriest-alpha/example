@@ -14,6 +14,8 @@ import org.springframework.context.annotation.{Configuration, EnableAspectJAutoP
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,9 +32,15 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, logic1: Log
 
   @Test def hello1(): Unit = {
     val event = DomainEvent1("example1")
-    mockMvc.perform(MockMvcRequestBuilders.post("/domain/event1")
+    val requestBuilder = MockMvcRequestBuilders.post("/domain/event1")
       .contentType(MediaType.APPLICATION_JSON)
-      .content(mapper.writeValueAsString(event)))
+      .content(mapper.writeValueAsString(event))
+
+    val asyncRequestMock = mockMvc.perform(requestBuilder)
+      .andExpect(request().asyncStarted())
+      .andReturn()
+
+    mockMvc.perform(asyncDispatch(asyncRequestMock))
       .andExpect(result => {
         val x: Result = mapper.readValue(result.getResponse.getContentAsString, classOf[Result])
         assert(x.code == 0, "Code wrong")
@@ -47,9 +55,16 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, logic1: Log
 
   @Test def hello2(): Unit = {
     val event = DomainEvent2("example2")
-    mockMvc.perform(MockMvcRequestBuilders.post("/domain/event2")
+    val requestBuilder = MockMvcRequestBuilders.post("/domain/event2")
       .contentType(MediaType.APPLICATION_JSON)
-      .content(mapper.writeValueAsString(event)))
+      .content(mapper.writeValueAsString(event))
+
+    val asyncRequestMock = mockMvc.perform(requestBuilder)
+      .andExpect(request().asyncStarted())
+      .andReturn()
+
+
+    mockMvc.perform(asyncDispatch(asyncRequestMock))
       .andExpect(result => {
         val x: Result = mapper.readValue(result.getResponse.getContentAsString, classOf[Result])
         assert(x.code == 0, "Code wrong")
