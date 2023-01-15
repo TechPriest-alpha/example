@@ -11,7 +11,7 @@ trait LogicFor[A] @Autowired()(val cfg: DomainConfig)(implicit tag: ClassTag[A])
 
   val processedEvents = new ConcurrentHashMap[String, A]()
 
-  def accept(event: A): CompletableFuture[OutputMarker];
+  def accept(event: A): CompletableFuture[PartialResult];
 
   def predicate(any: Any): Boolean = {
     log.info("Predicate applied with config: {}", cfg)

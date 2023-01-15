@@ -3,9 +3,9 @@ package my.scala.study.spring.domain
 import com.fasterxml.jackson.databind.ObjectMapper
 import my.scala.study.Loggable
 import my.scala.study.spring.domain.dto.{DomainEvent1, DomainEvent2, Result}
-import my.scala.study.spring.system.OutputMarker
+import my.scala.study.spring.system.{OutputMarker, PartialResult}
 import org.junit.jupiter.api.{BeforeEach, Disabled, Test}
-import org.mockito.Mockito
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
+
+import javax.naming.PartialResultException
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,7 +52,7 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, logic1: Log
     assert(logic1.processedEvents.containsValue(event))
     assert(logic2.processedEvents.isEmpty)
 
-    Mockito.verify(output).doNothing()
+    Mockito.verify(output).process(ArgumentMatchers.any(classOf[PartialResult]), ArgumentMatchers.eq(null))
   }
 
   @Test def hello2(): Unit = {
@@ -73,7 +75,7 @@ class InputTest @Autowired()(mockMvc: MockMvc, mapper: ObjectMapper, logic1: Log
     assert(logic2.processedEvents.containsKey(event.data2))
     assert(logic2.processedEvents.containsValue(event))
     assert(logic1.processedEvents.isEmpty)
-    Mockito.verify(output).doNothing();
+    Mockito.verify(output).process(ArgumentMatchers.any(classOf[PartialResult]), ArgumentMatchers.eq(null))
   }
 
 

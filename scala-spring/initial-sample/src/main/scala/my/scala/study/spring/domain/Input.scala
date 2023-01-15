@@ -42,9 +42,9 @@ class Input @Autowired()(val logics: java.util.List[LogicFor[?]], val output: Ou
     val execution = logics.stream()
       .filter(l => l.predicate(event))
       .map(l => l.asInstanceOf[LogicFor[event.type]].accept(event))
+      .map(f => f.whenComplete((result, error) => output.process(result, error)))
       .toList
 
-    output.doNothing()
     val x = execution.asScala.toArray[CompletableFuture[?]]
     CompletableFuture.allOf(x: _*)
       .handle((r, e) => new Result("OK", 0))
