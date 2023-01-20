@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>3.0.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -27,10 +27,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.version>3.2.0</scala.version>
+        <scala.version>3.2.2</scala.version>
 
         <jackson.version>2.13.4</jackson.version>
-        <akka.version>2.6.20</akka.version>
+        <akka.version>2.7.0</akka.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -47,6 +47,11 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor-typed_3</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster-sharding-typed_3</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
