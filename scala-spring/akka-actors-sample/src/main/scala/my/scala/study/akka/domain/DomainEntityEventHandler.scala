@@ -1,20 +1,33 @@
 package my.scala.study.akka.domain
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.receptionist.Receptionist
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorRef, Behavior}
 import my.scala.study.Loggable
-import my.scala.study.akka.domain.dto.{DomainEvent1, DomainEvent2, DomainEvents, InitEvent}
+import my.scala.study.akka.domain.DomainStateLogger.StateLoggerKey
+import my.scala.study.akka.domain.dto.*
 
-import java.util.concurrent.atomic.AtomicInteger
 
 object DomainEntityEventHandler extends Loggable {
   def apply(entityId: String): Behavior[DomainEvents] = {
 
     def process(state: Integer): Behavior[DomainEvents] = {
-      Behaviors.receiveMessage { message =>
-        log.info(s"Processed event $message with $entityId $state times")
-        process(state + 1)
+      Behaviors.receive { (context, message) =>
+        log.info(s"RECEIVE! $entityId $state")
+        val listingResponseAdapter = context.messageAdapter[Receptionist.Listing](ListingResponse.apply)
+        message match {
+          case ListingResponse(StateLoggerKey.Listing(listings)) =>
+            log.info(s"LISTING! $entityId $state $listings")
+            listings.foreach(loger => loger.tell(StateInfo(entityId, state)))
+            Behaviors.same
+          case InitEvent(id, name) =>
+            log.info(s"MESSAGE! $entityId $state")
+            context.system.receptionist ! Receptionist.Find(StateLoggerKey, listingResponseAdapter)
+            log.info(s"Processed event ($id, $name) with $entityId $state times")
+            process(state + 1)
+        }
       }
+
     }
 
     log.info(s"State initialized for $entityId")

@@ -1,5 +1,7 @@
 package my.scala.study.akka.configuration
 
+import akka.actor.typed.ActorRef.ActorRefOps
+import akka.actor.typed.receptionist.Receptionist
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.cluster.sharding.typed.ShardingEnvelope
 import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
@@ -21,8 +23,11 @@ class AkkaCfg {
 
   @Bean
   def domainSetup(typeKey: EntityTypeKey[DomainEvents]): ClusterSharding = {
-    val sharding = ClusterSharding(ActorSystem(DomainSetup(), "DomainSetup"))
-    sharding.init(Entity(typeKey)(createBehavior = entityContext => DomainEntityEventHandler(entityContext.entityId)))
+    val actorSystem = ActorSystem(DomainSetup(), "DomainSetup")
+    val sharding = ClusterSharding(actorSystem)
+    sharding.init(Entity(typeKey)(createBehavior = entityContext => {
+      DomainEntityEventHandler(entityContext.entityId)
+    }))
 
     sharding
   }
