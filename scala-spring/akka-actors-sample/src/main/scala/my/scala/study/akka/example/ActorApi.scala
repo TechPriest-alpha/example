@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.{GetMapping, PathVariable, Reques
 class ActorApi @Autowired()(
                              val actor1: ActorSystem[GreeterMain.SayHello],
                              val sharding: ClusterSharding,
-                             val domainTypeKey: EntityTypeKey[DomainEvents]
+                             val typeKeyNonPersistent: EntityTypeKey[DomainEvents],
+                             val typeKeyPersistent: EntityTypeKey[DomainEvents]
                            ) extends Loggable {
 
   @GetMapping(value = Array("/simple/{name}"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
@@ -28,9 +29,17 @@ class ActorApi @Autowired()(
 
   @GetMapping(value = Array("/simple2/{name}"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
   def simple2(@PathVariable("name") name: String): String = {
-    val ref = sharding.entityRefFor(domainTypeKey, name)
+    val ref = sharding.entityRefFor(typeKeyNonPersistent, name)
     ref ! InitEvent(name, "Business value")
     log.info("Simple2 called")
+    "Business event sent"
+  }
+
+  @GetMapping(value = Array("/simple3/{name}"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
+  def simple3(@PathVariable("name") name: String): String = {
+    val ref = sharding.entityRefFor(typeKeyPersistent, name)
+    ref ! InitEvent(name, "Business value")
+    log.info("Simple3 called")
     "Business event sent"
   }
 }
