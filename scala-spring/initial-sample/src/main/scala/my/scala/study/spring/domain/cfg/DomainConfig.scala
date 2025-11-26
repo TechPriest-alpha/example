@@ -1,7 +1,8 @@
 package my.scala.study.spring.domain.cfg
 
 import my.scala.study.Stringable
-import org.springframework.boot.context.properties.{ConfigurationProperties, ConstructorBinding}
+import org.springframework.boot.context.properties.bind.ConstructorBinding
+import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(value = "domain")
 @ConstructorBinding

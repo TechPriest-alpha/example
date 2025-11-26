@@ -15,7 +15,7 @@ import java.util
 import java.util.concurrent.CompletableFuture
 import scala.collection.mutable
 import scala.concurrent.Future
-import scala.jdk.CollectionConverters.*
+import scala.jdk.CollectionConverters
 import scala.reflect.ClassTag
 
 
@@ -39,15 +39,17 @@ class Input @Autowired()(val logics: java.util.List[LogicFor[?]], val output: Ou
 
     //    val x: List[LogicFor[?]] = List(Logic1(), Logic2())
     //    val logics = ctx.getBeansOfType(classOf[LogicFor[?]]).values()
-    val execution = logics.stream()
+    val execution = Seq(logics.stream()
       .filter(l => l.predicate(event))
       .map(l => l.asInstanceOf[LogicFor[event.type]].accept(event))
       .map(f => f.whenComplete((result, error) => output.process(result, error)))
-      .toList
+      .toArray[CompletableFuture[Any]])
 
-    val x = execution.asScala.toArray[CompletableFuture[?]]
-    CompletableFuture.allOf(x: _*)
+//    val x = execution.toArray[CompletableFuture[?]]
+
+    CompletableFuture.allOf(execution.toArray:*)
       .handle((r, e) => new Result("OK", 0))
+      execution.get(0).handle((r, e) => new Result("OK", 0))
     //    log.info("Logics: {}", logics)
 
   }
