@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: spring-boot-study
+  datasource:
+    url: jdbc:h2:mem:mydb
+    driver-class-name: org.h2.Driver
+    username:
+    password:
+server:
+  port: 8091

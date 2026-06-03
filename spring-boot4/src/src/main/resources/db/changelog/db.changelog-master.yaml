@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: me
+      label: test-init
+      runOnChange: false
+      changes:
+        - sqlFile:
+            path: sql/init.sql
+            relativeToChangelogFile: true
+
+
+
