@@ -14,7 +14,7 @@
         <logback.version>1.2.3</logback.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>8</jdk.version>
-        <spring.version>5.3.20</spring.version>
+        <spring.version>5.3.27</spring.version>
         <vertx.version>3.9.4</vertx.version>
         <junit.version>5.3.1</junit.version>
     </properties>
