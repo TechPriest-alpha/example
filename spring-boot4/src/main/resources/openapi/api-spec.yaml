@@ -1,0 +1,86 @@
+openapi: "3.0.3"
+info:
+  title: Spring Modulith Study API
+  description: REST API for Spring Modulith study project
+  version: "1.0.0"
+
+paths:
+  /api/study/{id}:
+    get:
+      operationId: getNumberString
+      summary: Get number and string by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NumberStringResponse"
+
+  /api/study/calculate:
+    post:
+      operationId: calculate
+      summary: Calculate sum of numbers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalculationRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalculationResponse"
+
+components:
+  schemas:
+    NumberStringResponse:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int64
+        text:
+          type: string
+      required:
+        - number
+        - text
+
+    CalculationRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        numbers:
+          type: array
+          items:
+            type: integer
+      required:
+        - date
+        - numbers
+
+    CalculationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        sum:
+          type: string
+      required:
+        - id
+        - sum
