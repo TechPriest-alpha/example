@@ -21,6 +21,31 @@ Modulith 2.1 split observability: `spring-modulith-observability` is now a **pom
 
 Boot 4 has no aggregated `spring-boot-starter-test` equivalent in this POM — add the per-technology `*-test` starter that matches the code under test.
 
+## OpenAPI-first API
+
+`openapi-generator-maven-plugin` (property `openapi-generator.version`) generates the API from `src/main/resources/openapi/api-spec.yaml` on every build:
+
+- generator `spring`, library `spring-boot`, `interfaceOnly=true`, `useTags=true` (tag `study` → `StudyApi`);
+- packages: `com.example.spring.modulith.study.api.generated` / `.generated.model`;
+- output: `target/generated-sources/openapi` (not committed);
+- `dateLibrary=java8-localdatetime`, `openApiNullable=false`, `useBeanValidation=false`.
+
+Workflow: change the spec → `mvn generate-sources` → implement the generated method in `StudyController`.
+
+The generated models annotate required fields with `@NotNull` regardless of `useBeanValidation`, so `jakarta.validation:jakarta.validation-api` is a required dependency.
+
+## Module layout
+
+```
+com.example.spring.modulith.study
+├── MyStudyApp            @SpringBootApplication(scanBasePackages = "com.example.spring")
+├── api                   @ApplicationModule(allowedDependencies = "calculation")
+├── calculation           @ApplicationModule(allowedDependencies = "data")
+└── data                  @ApplicationModule(type = CLOSED)
+```
+
+Modulith base package is the package of `MyStudyApp`; `scanBasePackages` only widens Spring component scanning (keeps the legacy `com.example.spring.study.SomeTestAPI` alive). Event flow is synchronous: `CalculationRequested` carries a `Consumer<CalculationCompleted>` callback, the `@Transactional @EventListener` persists both rows and calls back.
+
 ## Test annotation packages
 
 Boot 4 moved auto-configuration test annotations into technology-specific packages:

@@ -7,6 +7,8 @@ info:
 paths:
   /api/study/{id}:
     get:
+      tags:
+        - study
       operationId: getNumberString
       summary: Get number and string by ID
       parameters:
@@ -24,9 +26,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NumberStringResponse"
+        "404":
+          description: Not found
 
   /api/study/calculate:
     post:
+      tags:
+        - study
       operationId: calculate
       summary: Calculate sum of numbers
       requestBody:
@@ -67,6 +73,7 @@ components:
           format: date
         numbers:
           type: array
+          minItems: 1
           items:
             type: integer
       required:

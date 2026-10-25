@@ -36,7 +36,9 @@ Always compile and run tests after changing Java code. Do not claim success with
 
 ## Layout
 
-- `src/main/java/com/example/spring/study/` — the only production package so far.
+- `src/main/java/com/example/spring/study/` — legacy sample controller (`SomeTestAPI`, `/test/hello`).
+- `src/main/java/com/example/spring/modulith/study/` — application root `MyStudyApp` plus the `api`, `calculation`, `data` modules.
+- `target/generated-sources/openapi/` — `StudyApi` and its models, generated at build time (never committed).
 - `src/test/java/com/example/spring/study/` — tests mirror the production package; shared context tests extend `AbstractSpringBootTest`, which is the single place defining the `test` profile.
 - `src/main/resources/application.properties` — Modulith module declarations.
 - `src/main/resources/application.yaml` — application name, H2 file datasource, `server.port=8091`.
@@ -50,6 +52,7 @@ Always compile and run tests after changing Java code. Do not claim success with
 - Logging via Lombok `@Slf4j` with parameterized messages: `log.info("testHello: {}", value)`.
 - REST types use the `*API` suffix (`SomeTestAPI`); tests are `<Class>Test` in the same package.
 - HTTP tests: extend `AbstractSpringBootTest`, add `@AutoConfigureMockMvc`, field-inject `MockMvc`; never repeat `@SpringBootTest`/`@ActiveProfiles` in subclasses (a subclass-level `@ActiveProfiles` would replace the inherited one).
+- API boundary: implement the generated `StudyApi` interface; use generated model classes directly (no separate DTOs, no mapping layer).
 - Persistence: Spring Data JDBC — use records for aggregates and `org.springframework.data.annotation.Id`, **not** `jakarta.persistence` annotations.
 - Nullable inputs annotated with `jakarta.annotation.Nullable`.
 - Prefer constructor injection for new production beans; existing tests use `@Autowired` fields, which is fine for tests.
@@ -66,6 +69,18 @@ Boot 4 splits the old monolithic starters; do not copy Boot 3 coordinates or imp
 
 See `references/spring-boot-4.md` for module mapping, Modulith config, and Liquibase details.
 
+## Modulith modules (`com.example.spring.modulith.study`)
+
+| Module | Contents | May depend on |
+| --- | --- | --- |
+| `api` | `StudyController implements StudyApi`; publishes `CalculationRequested` | `calculation` |
+| `calculation` | `CalculationService` (`@EventListener` + `@Transactional`), `CalculationRequested`, `CalculationCompleted` | `data` |
+| `data` | `CalculationRequestRecord`, `CalculationResultRecord`, two `CrudRepository` interfaces (`Type.CLOSED`) | — |
+
+Flow: controller publishes a synchronous Spring event carrying a `Consumer<CalculationCompleted>` callback; the service stores a request row and a result row, computes the sum, then invokes the callback; the controller builds the generated response. GET reads through `CalculationService.find(id)`. `ModulithStructureTest` asserts `verify()` and exactly three modules.
+
+OpenAPI-first workflow: edit `src/main/resources/openapi/api-spec.yaml` → `mvn generate-sources` → implement the new/changed method in `StudyController`.
+
 ## Pitfalls in this project
 
 - **Modulith naming mismatch**: `application.properties` declares modules under `com.example.spring.modulith.study.*`, while production code is in `com.example.spring.study`. New modules must live under the package that matches these properties, or the properties must be updated.
@@ -75,10 +90,11 @@ See `references/spring-boot-4.md` for module mapping, Modulith config, and Liqui
 - **Compiler release**: `maven.compiler.source/target` are ignored while `maven.compiler.release` is set (the Boot parent derives it from `${java.version}`). This POM sets only `<java.version>25</java.version>`; keep it that way instead of reintroducing `source`/`target`.
 - **No preview features**: the compiler config has no `--enable-preview`, so preview APIs will not compile even after the release is raised.
 - **Lombok** is `optional` and excluded from the Boot fat jar; annotation processing is configured for both `compile` and `test-compile`. Do not add it as a normal runtime dependency.
+- **Generated code needs `jakarta.validation-api`**: the spring generator emits `@NotNull` on required model fields even with `useBeanValidation=false`, so the dependency must stay in the POM.
 
 ## Adding a feature (workflow)
 
-1. Create/modify code under `src/main/java/com/example/spring/study/...`.
+1. Create/modify code under `src/main/java/com/example/spring/modulith/study/<module>/...`; keep module dependencies one-way (`api → calculation → data`).
 2. Add a mirrored test under `src/test/java/...`; extend `AbstractSpringBootTest` (add `@AutoConfigureMockMvc` for HTTP).
 3. For schema changes, add a changeset under `src/main/resources/db/changelog/` and reference it from the master changelog.
 4. Add Maven dependencies with the Boot-managed versions (no `<version>` unless the artifact is outside the BOM).

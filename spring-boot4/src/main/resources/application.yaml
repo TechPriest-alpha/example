@@ -14,3 +14,13 @@ spring:
       max-lifetime: 1800000
 server:
   port: 8091
+logging:
+  level:
+    com.example.spring.modulith: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{40} - %msg%n"
+app:
+  calculation:
+    transaction:
+      write-timeout-seconds: 5
+      read-timeout-seconds: 2
