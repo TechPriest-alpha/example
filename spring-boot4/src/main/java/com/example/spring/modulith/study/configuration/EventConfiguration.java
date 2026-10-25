@@ -1,7 +1,6 @@
 package com.example.spring.modulith.study.configuration;
 
-import com.example.spring.modulith.study.calculation.CalculationCompleted;
-import com.example.spring.modulith.study.calculation.CalculationRequested;
+import com.example.spring.modulith.study.calculation.DomainEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,17 +21,10 @@ class EventConfiguration {
     @Slf4j
     static class DomainEventLogger {
 
-        /** Logs the incoming domain command as it is published. */
+        /** Logs every domain event as-is once it is published. */
         @EventListener
-        void onRequested(CalculationRequested event) {
-            log.info("Domain event published: CalculationRequested(date={}, numbers={})",
-                event.date(), event.numbers());
-        }
-
-        /** Logs the processing outcome before the controller builds the HTTP response. */
-        @EventListener
-        void onCompleted(CalculationCompleted event) {
-            log.info("Domain event published: CalculationCompleted(id={}, sum={})", event.id(), event.sum());
+        void on(DomainEvent event) {
+            log.info("Domain event published: {}", event);
         }
     }
 }

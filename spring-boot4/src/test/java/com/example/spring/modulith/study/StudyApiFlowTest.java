@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Comparator;
 import java.util.stream.StreamSupport;
 
-import com.example.spring.modulith.study.data.CalculationResultRecord;
-import com.example.spring.modulith.study.data.CalculationResultRepository;
+import com.example.spring.modulith.study.data.dto.CalculationResultRecord;
+import com.example.spring.modulith.study.data.repositories.CalculationResultRepository;
 import com.example.spring.study.AbstractSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
