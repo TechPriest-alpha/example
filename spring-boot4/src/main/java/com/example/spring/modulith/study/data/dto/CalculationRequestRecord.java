@@ -10,8 +10,10 @@ import org.springframework.data.annotation.Id;
 public record CalculationRequestRecord(@Id Long id, LocalDate requestDate, String numbers) {
 
     public static CalculationRequestRecord of(CalculationRequest request) {
-        return new CalculationRequestRecord(null, request.getDate(), request.getNumbers().stream()
-            .map(String::valueOf)
-            .collect(joining(",")));
+        return new CalculationRequestRecord(
+            null,
+            request.getDate(),
+            request.getNumbers().stream().map(String::valueOf).collect(joining(","))
+        );
     }
 }

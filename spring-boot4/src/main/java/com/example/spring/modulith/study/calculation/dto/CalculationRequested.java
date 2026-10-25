@@ -1,18 +1,12 @@
 package com.example.spring.modulith.study.calculation.dto;
 
-import java.util.function.Consumer;
-
 import com.example.spring.generated.study.model.CalculationRequest;
-import com.example.spring.modulith.study.calculation.DomainEvent;
 import jakarta.validation.constraints.NotNull;
 
-public record CalculationRequested(
-    @NotNull CalculationRequest request,
-    @NotNull Consumer<CalculationCompleted> onCompleted) implements DomainEvent {
+public record CalculationRequested(@NotNull CalculationRequest request) {
 
-    public static CalculationRequested from(CalculationRequest request,
-            Consumer<CalculationCompleted> onCompleted) {
-        return new CalculationRequested(request, onCompleted);
+    public static CalculationRequested from(CalculationRequest request) {
+        return new CalculationRequested(request);
     }
 
     public long total() {

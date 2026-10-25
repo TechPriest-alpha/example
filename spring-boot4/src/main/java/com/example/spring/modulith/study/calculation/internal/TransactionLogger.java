@@ -1,6 +1,6 @@
-package com.example.spring.modulith.study.configuration;
+package com.example.spring.modulith.study.calculation.internal;
 
-import com.example.spring.modulith.study.calculation.DomainEvent;
+import com.example.spring.modulith.study.calculation.dto.DomainEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;

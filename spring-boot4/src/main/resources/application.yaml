@@ -1,4 +1,7 @@
 spring:
+  integration:
+    channels:
+      auto-create: false
   application:
     name: spring-boot-study
   datasource:

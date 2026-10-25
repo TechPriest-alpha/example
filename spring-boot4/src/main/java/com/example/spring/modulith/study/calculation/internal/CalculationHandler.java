@@ -1,7 +1,8 @@
-package com.example.spring.modulith.study.calculation;
+package com.example.spring.modulith.study.calculation.internal;
 
 import com.example.spring.modulith.study.calculation.dto.CalculationCompleted;
 import com.example.spring.modulith.study.calculation.dto.CalculationRequested;
+import com.example.spring.modulith.study.configuration.messaging.CalculationChannels;
 import com.example.spring.modulith.study.data.dto.CalculationRequestRecord;
 import com.example.spring.modulith.study.data.dto.CalculationResultRecord;
 import com.example.spring.modulith.study.data.repositories.CalculationRequestRepository;
@@ -10,7 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -25,17 +26,20 @@ public class CalculationHandler {
     private final CalculationResultRepository results;
     private final ApplicationEventPublisher events;
 
-    @EventListener
+    @ServiceActivator(inputChannel = CalculationChannels.REQUESTS)
     @Transactional(timeoutString = "${app.calculation.transaction.write-timeout-seconds}")
-    public void handle(@Valid CalculationRequested event) {
-        log.debug("Handling calculation request for date {} with {} numbers",
-            event.request().getDate(), event.request().getNumbers().size());
+    public CalculationCompleted handle(@Valid CalculationRequested request) {
+        log.debug(
+            "Handling calculation request for date {} with {} numbers",
+            request.request().getDate(),
+            request.request().getNumbers().size()
+        );
 
-        var request = requests.save(CalculationRequestRecord.of(event.request()));
-        var result = results.save(CalculationResultRecord.of(request, event.total()));
+        var savedRequest = requests.save(CalculationRequestRecord.of(request.request()));
+        var result = results.save(CalculationResultRecord.of(savedRequest, request.total()));
 
         var completed = CalculationCompleted.from(result);
         events.publishEvent(completed);
-        event.onCompleted().accept(completed);
+        return completed;
     }
 }

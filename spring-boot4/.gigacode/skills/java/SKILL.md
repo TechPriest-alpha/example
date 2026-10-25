@@ -49,6 +49,14 @@ Always compile and run tests after changing Java code. Do not claim success with
 ## Conventions (observed in this repo)
 
 - 4 spaces, no tabs, UTF-8, one type per file.
+- **Method arguments**: keep them on one line when the whole declaration/call is shorter than 130 characters. Otherwise put every argument on its own line, and move `(` and `)` to their own lines:
+
+  ```java
+  someCall(
+      firstArgument,
+      secondArgument
+  );
+  ```
 - Logging via Lombok `@Slf4j` with parameterized messages: `log.info("testHello: {}", value)`.
 - REST types use the `*API` suffix (`SomeTestAPI`); tests are `<Class>Test` in the same package.
 - HTTP tests: extend `AbstractSpringBootTest`, add `@AutoConfigureMockMvc`, field-inject `MockMvc`; never repeat `@SpringBootTest`/`@ActiveProfiles` in subclasses (a subclass-level `@ActiveProfiles` would replace the inherited one).
